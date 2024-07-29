@@ -130,7 +130,7 @@ class BaseSamplerSetup:
     clamp_cfg = clamp(cfg, cfg_range[0], cfg_range[1])
 
     steps_range = numeric_range(setup[1])
-    clamp_steps = int(clamp(steps, steps_range[0], steps_range[1]))
+    clamp_steps = clamp(steps, steps_range[0], steps_range[1])
 
     clamp_scheduler = clamp_in_list(scheduler, setup[2].split(","))
     clamp_sampler = clamp_in_list(sampler, setup[3].split(","))
@@ -139,8 +139,8 @@ class BaseSamplerSetup:
     setup_text = f"cfg: {clamp_cfg} | steps: {clamp_steps} | scheduler: {clamp_scheduler} | sampler: {clamp_sampler}"
     
     return (
-        clamp_cfg,
-        clamp_steps,
+        float(clamp_cfg),
+        int(clamp_steps),
         clamp_scheduler,
         clamp_sampler,
         setup_text,
@@ -198,8 +198,8 @@ class OverrideSamplerSetup:
       setup_text = f"cfg: {cfg_output} | steps: {steps_output} | scheduler: {scheduler_output} | sampler: {sampler_output}"
       
       return (
-        cfg_output,
-        steps_output,
+        float(cfg_output),
+        int(steps_output),
         sampler_output,
         scheduler_output,
         setup_text
