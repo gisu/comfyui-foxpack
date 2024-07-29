@@ -1,0 +1,426 @@
+{
+  "last_node_id": 8,
+  "last_link_id": 7,
+  "nodes": [
+    {
+      "id": 3,
+      "type": "SetupSelector",
+      "pos": [
+        -7598,
+        741
+      ],
+      "size": [
+        281.97929536464653,
+        206
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "checkpoint_name",
+          "type": "STRING",
+          "link": 1,
+          "widget": {
+            "name": "checkpoint_name"
+          }
+        },
+        {
+          "name": "checkpoint_setups",
+          "type": "STRING",
+          "link": 2,
+          "widget": {
+            "name": "checkpoint_setups"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "name": "set_cfg",
+          "type": "STRING",
+          "links": null,
+          "shape": 3
+        },
+        {
+          "name": "set_steps",
+          "type": "STRING",
+          "links": null,
+          "shape": 3
+        },
+        {
+          "name": "set_scheduler",
+          "type": "STRING",
+          "links": null,
+          "shape": 3
+        },
+        {
+          "name": "set_sampler",
+          "type": "STRING",
+          "links": null,
+          "shape": 3
+        },
+        {
+          "name": "setup_text",
+          "type": "STRING",
+          "links": [
+            5
+          ],
+          "shape": 3,
+          "slot_index": 4
+        },
+        {
+          "name": "setup",
+          "type": "LIST",
+          "links": [
+            3
+          ],
+          "shape": 3,
+          "slot_index": 5
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SetupSelector"
+      },
+      "widgets_values": [
+        "",
+        "",
+        "!",
+        "/",
+        "5/20/karras/dpmpp_2m"
+      ]
+    },
+    {
+      "id": 1,
+      "type": "BaseSamplerSetup",
+      "pos": [
+        -7292,
+        736
+      ],
+      "size": [
+        248.99240964328146,
+        230
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "setup",
+          "type": "LIST",
+          "link": 3
+        }
+      ],
+      "outputs": [
+        {
+          "name": "cfg",
+          "type": "FLOAT,INT,NUMBER,STRING",
+          "links": null,
+          "shape": 3
+        },
+        {
+          "name": "steps",
+          "type": "FLOAT,INT,NUMBER,STRING",
+          "links": null,
+          "shape": 3
+        },
+        {
+          "name": "scheduler",
+          "type": "STRING",
+          "links": null,
+          "shape": 3
+        },
+        {
+          "name": "sampler",
+          "type": "STRING",
+          "links": null,
+          "shape": 3
+        },
+        {
+          "name": "setup_text",
+          "type": "STRING",
+          "links": [],
+          "shape": 3,
+          "slot_index": 4
+        },
+        {
+          "name": "selected_setup",
+          "type": "LIST",
+          "links": [
+            4
+          ],
+          "shape": 3,
+          "slot_index": 5
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "BaseSamplerSetup"
+      },
+      "widgets_values": [
+        1,
+        5,
+        "normal",
+        "euler"
+      ]
+    },
+    {
+      "id": 2,
+      "type": "OverrideSamplerSetup",
+      "pos": [
+        -7020,
+        738
+      ],
+      "size": [
+        243.51534679262386,
+        234
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "setup",
+          "type": "LIST",
+          "link": 4
+        }
+      ],
+      "outputs": [
+        {
+          "name": "cfg",
+          "type": "FLOAT,INT,NUMBER,STRING",
+          "links": null,
+          "shape": 3
+        },
+        {
+          "name": "steps",
+          "type": "FLOAT,INT,NUMBER,STRING",
+          "links": null,
+          "shape": 3
+        },
+        {
+          "name": "scheduler",
+          "type": "COMBO",
+          "links": null,
+          "shape": 3
+        },
+        {
+          "name": "sampler",
+          "type": "COMBO",
+          "links": null,
+          "shape": 3
+        },
+        {
+          "name": "setup_text",
+          "type": "STRING",
+          "links": [
+            7
+          ],
+          "shape": 3,
+          "slot_index": 4
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "OverrideSamplerSetup"
+      },
+      "widgets_values": [
+        "disabled",
+        1,
+        5,
+        "normal",
+        "euler"
+      ]
+    },
+    {
+      "id": 6,
+      "type": "Show any [Crystools]",
+      "pos": [
+        -7420,
+        1034
+      ],
+      "size": [
+        447.83773248165926,
+        148
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "any_value",
+          "type": "*",
+          "link": 5
+        }
+      ],
+      "title": "Possible Setup",
+      "properties": {
+        "Node name for S&R": "Show any [Crystools]"
+      }
+    },
+    {
+      "id": 4,
+      "type": "CR Multiline Text",
+      "pos": [
+        -8141,
+        768
+      ],
+      "size": [
+        417.02537729748383,
+        497.837044041466
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 0,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "multiline_text",
+          "type": "*",
+          "links": [
+            2
+          ],
+          "shape": 3,
+          "slot_index": 0
+        },
+        {
+          "name": "show_help",
+          "type": "STRING",
+          "links": null,
+          "shape": 3
+        }
+      ],
+      "title": "Model settings",
+      "properties": {
+        "Node name for S&R": "CR Multiline Text"
+      },
+      "widgets_values": [
+        "!anithing_v10=\"4-7/20-40/karras/dpmpp_2m\"\n!ponyDiffusionV6XL_v6StartWithThisOne=\"3-7/20-60/karras/euler_ancestral\"\n!sdxlNijiSeven_sdxlNijiSeven=\"3.5-6/26-50/karras/dpmpp_sde\"\n!sdxlNijiV6_sdxlNijiV6=\"3.5-6/26-50/karras/dpmpp_sde\"\n!demonCORESFWNSFW_41MIDGARDBEAST=\"5-10/10-70/karras/dpmpp_sde\"\n!level4XL_alphaV04=\"1-3/8-16/karras/dpmpp_sde\"\n!mobius-fp16=\"3.5-7/50/karras/dpmpp_3m_sde\"\n!moxieDiffusionXL_v191=\"6/30/karras/dpmpp_sde\"\n!proteusRundiffusionDPO_truereversecubich=\"3-7/20-60/karras/dpmpp_sde\"\n!proteus_v04beta=\"2-7/20-50/karras/dpmpp_2m,dpmpp_2m_sde\"\n!proteus_v03=\"2-7/20-50/karras/dpmpp_2m,dpmpp_2m_sde\"\n!proteus_v05=\"2-7/20-50/karras/dpmpp_2m,dpmpp_2m_sde\"\n!CHINOOK_v10=\"1-8/20-40/karras/dpmpp_2m\"\n!MOHAWK_v20=\"4-6/30-60/karras/dpmpp_2m_sde\"\n!zavychromaxl_v90=\"4-10/20-40/karras,exponential/dpmpp_3m_sde,dpmpp\"\n!halcyonSDXL_v17=\"5-8/20-50/karras/dpmpp_3m_sde\"\n!halcyonSDXL_v18=\"5-8/20-50/karras/dpmpp_3m_sde\"\n!CHEYENNE_v16=\"1.5-8/25-50/karras,exponential/dpmpp_2m,dpmpp_2m_sde\"\n!anithing_v30Pruned=\"5/20/karras/dpmpp_2m_sde\"\n!photon_v1=\"6/20/karras/dpmpp_2m\"\n!arthemyComics_v70=\"6-10/25-50/karras/dpmpp_2m\"",
+        false,
+        "'",
+        false,
+        "",
+        false
+      ]
+    },
+    {
+      "id": 5,
+      "type": "Simple String",
+      "pos": [
+        -8047,
+        622
+      ],
+      "size": {
+        "0": 315,
+        "1": 58
+      },
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            1
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Simple String"
+      },
+      "widgets_values": [
+        "demonCORESFWNSFW_41MIDGARDBEAST"
+      ]
+    },
+    {
+      "id": 8,
+      "type": "Show any [Crystools]",
+      "pos": [
+        -7407,
+        1224
+      ],
+      "size": [
+        427.6666753100126,
+        148
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "any_value",
+          "type": "*",
+          "link": 7
+        }
+      ],
+      "title": "Real Setup",
+      "properties": {
+        "Node name for S&R": "Show any [Crystools]"
+      }
+    }
+  ],
+  "links": [
+    [
+      1,
+      5,
+      0,
+      3,
+      0,
+      "STRING"
+    ],
+    [
+      2,
+      4,
+      0,
+      3,
+      1,
+      "STRING"
+    ],
+    [
+      3,
+      3,
+      5,
+      1,
+      0,
+      "LIST"
+    ],
+    [
+      4,
+      1,
+      5,
+      2,
+      0,
+      "LIST"
+    ],
+    [
+      5,
+      3,
+      4,
+      6,
+      0,
+      "*"
+    ],
+    [
+      7,
+      2,
+      4,
+      8,
+      0,
+      "*"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "groupNodes": {},
+    "ds": {
+      "scale": 1.2777608123779336,
+      "offset": {
+        "0": 8290.360904746341,
+        "1": -503.4974099873527
+      }
+    }
+  },
+  "version": 0.4
+}

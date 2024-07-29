@@ -13,3 +13,8 @@ A collection of nodes to automate workflows. I created the node to save nodes wi
     ```
 3. Start up ComfyUI.
 
+### Smart Sampler Setup (SSS)
+
+Adding an image
+
+![SmartSamplerSetup](https://github.com/comfyanonymous/ComfyUI/assets/smartsampler.png)
