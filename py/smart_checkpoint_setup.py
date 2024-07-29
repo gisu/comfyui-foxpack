@@ -31,8 +31,8 @@ class SetupSelector:
         }
     }
 
-  RETURN_TYPES = ("STRING", "STRING", "STRING", "STRING","STRING", "LIST")
-  RETURN_NAMES = ("set_cfg", "set_steps", "set_scheduler", "set_sampler", "setup_text", "setup")
+  RETURN_TYPES = ("STRING", "STRING", "STRING", "STRING","STRING", "LIST", "STRING")
+  RETURN_NAMES = ("set_cfg", "set_steps", "set_scheduler", "set_sampler", "setup_text", "setup", "meta")
   
   FUNCTION = "main"
   # OUTPUT_NODE = True
@@ -70,11 +70,49 @@ class SetupSelector:
 
     settings = return_string.split(delmiter)
 
+    print(len(settings))
+
+    if (len(settings) < 5):
+        # meta infos: version (3=3.x,x=xl,1=1.5), clip, vae (b = intern  / x = external)
+        meta = "xl,2,b"
+    else:
+        meta = settings[4]
+
     setup = list(settings)
     setup_text = f"cfg: {settings[0]} | steps: {settings[1]} | scheduler: {settings[2]} | sampler: {settings[3]}"
-    return (settings[0], settings[1], settings[2], settings[3], setup_text, setup)
+    return (settings[0], settings[1], settings[2], settings[3], setup_text, setup, meta)
     
-  
+
+class CheckpointMetaExtractor:
+  def __init__(self):
+    pass
+
+  @classmethod
+  def INPUT_TYPES(cls):
+    return {
+        "required": {
+            "meta": ("STRING", {
+              "forceInput": True,
+              "multiline": False
+            }),
+        }
+    }
+
+  RETURN_TYPES = ("STRING", "INT", "BOOL")
+  RETURN_NAMES = ("version", "clip", "vae baked?")
+
+  FUNCTION = "metaFun"
+
+  def metaFun(self, meta):
+    meta = meta.split(",")
+    version = meta[0]
+    clip = int(meta[1])
+    vae = meta[2]
+    return (
+        version,
+        -abs(clip),
+        vae)
+
 class BaseSamplerSetup:
   def __init__(self):
     pass
