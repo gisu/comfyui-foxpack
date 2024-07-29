@@ -17,4 +17,4 @@ A collection of nodes to automate workflows. I created the node to save nodes wi
 
 Adding an image
 
-![SmartSamplerSetup](https://github.com/comfyanonymous/ComfyUI/assets/smartsampler.png)
+![SmartSamplerSetup](https://github.com/gisu/comfyui-foxpack/assets/smartsampler.png)
