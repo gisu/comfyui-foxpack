@@ -129,8 +129,9 @@ class Select_By_Index:
   CATEGORY = "Foxpack/Logic"
 
   def main(self, index, options):
+    arr = options.split(",")
     return (
-      str(options[index]),
+      arr[index],
     )
 
 class Show_Type:
