@@ -27,6 +27,10 @@ class SetupSelector:
             "default_setup": ("STRING", {
               "default": "5/20/karras/dpmpp_2m",
               "multiline": False
+            }),
+            "default_meta": ("STRING", {
+              "default": "0,-2,0",
+              "multiline": False
             })
         }
     }
@@ -39,7 +43,7 @@ class SetupSelector:
   
   CATEGORY = "Foxpack/Smart Sampler Setup"
   
-  def main(self, checkpoint_name, checkpoint_setups, setup_prefix, delmiter, default_setup):
+  def main(self, checkpoint_name, checkpoint_setups, setup_prefix, delmiter, default_setup, default_meta):
     return_string = ""
     prefixed_name = str(setup_prefix) + str(checkpoint_name)
     
@@ -73,8 +77,8 @@ class SetupSelector:
     print(len(settings))
 
     if (len(settings) < 5):
-        # meta infos: version (3=3.x,x=xl,1=1.5), clip, vae (b = intern  / x = external)
-        meta = "xl,-2,baked"
+        # meta infos: version (0:sdxl, 1:sd15), clip, vae (0: baked, 1: not baked)
+        meta = default_meta
     else:
         meta = settings[4]
 
