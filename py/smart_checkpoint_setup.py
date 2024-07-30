@@ -101,6 +101,8 @@ class CheckpointMetaExtractor:
   RETURN_TYPES = ("STRING", "INT", "BOOL")
   RETURN_NAMES = ("version", "clip", "vae baked?")
 
+  CATEGORY = "Foxpack/Smart Sampler Setup"
+
   FUNCTION = "metaFun"
 
   def metaFun(self, meta):
