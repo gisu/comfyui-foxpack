@@ -1,3 +1,9 @@
+class AnyType(str):
+    def __ne__(self, __value: object) -> bool:
+        return False
+
+any_type = AnyType("*")
+
 class Remap_Values:
   def __init__(self):
     pass
@@ -96,4 +102,59 @@ class Select_String_By_Index:
     
     return (
       selected_option,
+    )
+
+class Select_By_Index:
+  def __init__(self):
+    pass
+
+  @classmethod
+  def INPUT_TYPES(s):
+    return {
+      "required": {
+        "index": ("INT", {
+          "default": 0,
+        }),
+        "options": ("STRING", {
+          "forceInput": True
+        }),
+      }
+    }
+
+  RETURN_TYPES = (any_type,)
+  RETURN_NAMES = ("value")
+
+  FUNCTION = "main"
+
+  CATEGORY = "Foxpack/Logic"
+
+  def main(self, index, options):
+    return (
+      options[index],
+    )
+
+class Show_Type:
+  def __init__(self):
+    pass
+
+  @classmethod
+  def INPUT_TYPES(s):
+    return {
+      "required": {
+        "value": (any_type, {
+          "forceInput": True
+        }),
+      }
+    }
+
+  RETURN_TYPES = ("STRING",)
+  RETURN_NAMES = ("value",)
+
+  FUNCTION = "main"
+
+  CATEGORY = "Foxpack/Logic"
+
+  def main(self, value):
+    return (
+      str(type(value))
     )

@@ -98,7 +98,7 @@ class CheckpointMetaExtractor:
         }
     }
 
-  RETURN_TYPES = ("STRING", "INT", "BOOL")
+  RETURN_TYPES = ("STRING", "INT", "STRING")
   RETURN_NAMES = ("version", "clip", "vae baked?")
 
   CATEGORY = "Foxpack/Smart Sampler Setup"
