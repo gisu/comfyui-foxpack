@@ -74,7 +74,7 @@ class SetupSelector:
 
     if (len(settings) < 5):
         # meta infos: version (3=3.x,x=xl,1=1.5), clip, vae (b = intern  / x = external)
-        meta = "xl,2,b"
+        meta = "v=xl,c=2,vae=baked"
     else:
         meta = settings[4]
 
@@ -199,10 +199,7 @@ class OverrideSamplerSetup:
                 "setup": ("LIST", {
                   "forceInput": True
                 }),
-                "override": (["enabled", "disabled"],{
-                  "default": "disabled",
-                  "display": "radio"
-                }),
+                "override": ("BOOLEAN", {"default": False}),
                 "cfg": ("FLOAT", {
                   "default": 1.0,
                   "min": 0.0,
@@ -228,10 +225,10 @@ class OverrideSamplerSetup:
     FUNCTION = "main"
 
     def main(self, override, setup, steps, cfg, sampler, scheduler):
-      cfg_output = cfg if override == "enabled" else setup[0]
-      steps_output = steps if override == "enabled" else setup[1]
-      scheduler_output = scheduler if override == "enabled" else setup[2]
-      sampler_output = sampler if override == "enabled" else setup[3]
+      cfg_output = cfg if override else setup[0]
+      steps_output = steps if override else setup[1]
+      scheduler_output = scheduler if override else setup[2]
+      sampler_output = sampler if override else setup[3]
 
       setup_text = f"cfg: {cfg_output} | steps: {steps_output} | scheduler: {scheduler_output} | sampler: {sampler_output}"
       
