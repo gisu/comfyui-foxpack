@@ -1,5 +1,4 @@
 import torch
-
 class UniversalLatentHelper:
     def __init__(self):
       pass
@@ -67,7 +66,7 @@ class UniversalLatentHelper:
       latent = torch.zeros([batch_size, 4, height // 8, width // 8])
       
       return (
-          width,
-          height,
-          batch_size,
+          int(width),
+          int(height),
+          int(batch_size),
           {"samples": latent},)

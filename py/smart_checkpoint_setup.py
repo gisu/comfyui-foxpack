@@ -50,27 +50,27 @@ class SetupSelector:
     index = checkpoint_setups.find(prefixed_name)
     
     if index != -1:
-        if checkpoint_setups[index + len(prefixed_name)] == '=':
-            if checkpoint_setups[index + len(prefixed_name) + 1] == '"':
-                start_quote = index + len(prefixed_name) + 2
-                end_quote = checkpoint_setups.find('"', start_quote + 1)
-                if end_quote != -1:
-                    return_string = checkpoint_setups[start_quote:end_quote]
-                    print(return_string)
-            else:        
-                space_index = checkpoint_setups.find(" ", index + len(prefixed_name))
-                if space_index != -1:
-                    return_string = checkpoint_setups[index + len(prefixed_name):space_index]
-                else:
-                    return_string = checkpoint_setups[index + len(prefixed_name):]
-        else:
-            return_string = prefixed_name[1:]
+      if checkpoint_setups[index + len(prefixed_name)] == '=':
+        if checkpoint_setups[index + len(prefixed_name) + 1] == '"':
+          start_quote = index + len(prefixed_name) + 2
+          end_quote = checkpoint_setups.find('"', start_quote + 1)
+          if end_quote != -1:
+            return_string = checkpoint_setups[start_quote:end_quote]
+            print(return_string)
+        else:        
+          space_index = checkpoint_setups.find(" ", index + len(prefixed_name))
+          if space_index != -1:
+            return_string = checkpoint_setups[index + len(prefixed_name):space_index]
+          else:
+            return_string = checkpoint_setups[index + len(prefixed_name):]
+      else:
+        return_string = prefixed_name[1:]
 
     if return_string == "":
-        return_string = default_setup
+      return_string = default_setup
     
     if return_string.startswith("="):
-        return_string = return_string[1:]
+      return_string = return_string[1:]
 
     settings = return_string.split(delmiter)
 
@@ -83,8 +83,16 @@ class SetupSelector:
         meta = settings[4]
 
     setup = list(settings)
-    setup_text = f"cfg: {settings[0]} | steps: {settings[1]} | scheduler: {settings[2]} | sampler: {settings[3]}"
-    return (settings[0], settings[1], settings[2], settings[3], setup_text, setup, meta)
+    setup_text = f"cfg: {float(settings[0])} | steps: {settings[1]} | scheduler: {settings[2]} | sampler: {settings[3]}"
+    return (
+      str(settings[0]), 
+      str(settings[1]), 
+      str(settings[2]), 
+      str(settings[3]), 
+      str(setup_text), 
+      list(setup), 
+      str(meta)
+    )
     
 
 class CheckpointMetaExtractor:
@@ -94,15 +102,15 @@ class CheckpointMetaExtractor:
   @classmethod
   def INPUT_TYPES(cls):
     return {
-        "required": {
-            "meta": ("STRING", {
-              "forceInput": True,
-              "multiline": False
-            }),
-        }
+      "required": {
+        "meta": ("STRING", {
+          "forceInput": True,
+          "multiline": False
+        }),
+      }
     }
 
-  RETURN_TYPES = ("STRING", "INT", "STRING")
+  RETURN_TYPES = ("INT", "INT", "INT")
   RETURN_NAMES = ("version", "clip", "vae baked?")
 
   CATEGORY = "Foxpack/Smart Sampler Setup"
@@ -114,10 +122,12 @@ class CheckpointMetaExtractor:
     version = meta[0]
     clip = int(meta[1])
     vae = meta[2]
+    
     return (
-        version,
-        -abs(clip),
-        vae)
+      int(version),
+      -abs(clip),
+      int(vae)
+    )
 
 class BaseSamplerSetup:
   def __init__(self):
@@ -127,27 +137,27 @@ class BaseSamplerSetup:
   
   def INPUT_TYPES(s):
     return {
-        "required": {
-            "setup": ("LIST", {
-              "forceInput": True
-            }),
-            "cfg": ("FLOAT", {
-                "default": 1.0,
-                "min": 0.0,
-                "max": 16.0,
-                "step": 0.1,
-                "display": "number"
-            }),
-            "steps": ("INT", {
-                "default": 5,
-                "min": 1,
-                "max": 100,
-                "step": 1,
-                "display": "number"
-            }),
-            "scheduler": (comfy.samplers.KSampler.SCHEDULERS,),
-            "sampler": (comfy.samplers.KSampler.SAMPLERS,),
-        }
+      "required": {
+        "setup": ("LIST", {
+          "forceInput": True
+        }),
+        "cfg": ("FLOAT", {
+          "default": 1.0,
+          "min": 0.0,
+          "max": 16.0,
+          "step": 0.1,
+          "display": "number"
+        }),
+        "steps": ("INT", {
+          "default": 5,
+          "min": 1,
+          "max": 100,
+          "step": 1,
+          "display": "number"
+        }),
+        "scheduler": (comfy.samplers.KSampler.SCHEDULERS,),
+        "sampler": (comfy.samplers.KSampler.SAMPLERS,),
+      }
     }
 
   RETURN_TYPES = ("FLOAT", "INT", "STRING", "STRING", "STRING", "LIST")
@@ -183,12 +193,12 @@ class BaseSamplerSetup:
     setup_text = f"cfg: {clamp_cfg} | steps: {clamp_steps} | scheduler: {clamp_scheduler} | sampler: {clamp_sampler}"
     
     return (
-        float(clamp_cfg),
-        int(clamp_steps),
-        clamp_scheduler,
-        clamp_sampler,
-        setup_text,
-        selected_setup
+      float(clamp_cfg),
+      int(clamp_steps),
+      str(clamp_scheduler),
+      str(clamp_sampler),
+      str(setup_text),
+      list(selected_setup)
     )
 
   CATEGORY = "Foxpack/Smart Sampler Setup"
@@ -243,7 +253,7 @@ class OverrideSamplerSetup:
         int(steps_output),
         sampler_output,
         scheduler_output,
-        setup_text
+        str(setup_text)
       )
 
     CATEGORY = "Foxpack/Smart Sampler Setup"

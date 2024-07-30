@@ -42,7 +42,7 @@ class Remap_Values:
     show_help = "show me some help"
     
     return (
-      entry,
+      str(entry),
       show_help
     )
 
@@ -101,7 +101,7 @@ class Select_String_By_Index:
     print("selectedoption:", selected_option)
     
     return (
-      selected_option,
+      str(selected_option),
     )
 
 class Select_By_Index:
@@ -130,7 +130,7 @@ class Select_By_Index:
 
   def main(self, index, options):
     return (
-      options[index],
+      str(options[index]),
     )
 
 class Show_Type:
@@ -147,14 +147,13 @@ class Show_Type:
       }
     }
 
-  RETURN_TYPES = ("STRING",)
-  RETURN_NAMES = ("value",)
+  RETURN_TYPES = ()
+  RETURN_NAMES = ()
 
   FUNCTION = "main"
 
   CATEGORY = "Foxpack/Logic"
 
   def main(self, value):
-    return (
-      str(type(value))
-    )
+    print("Show_Type", value, type(value))
+    return ()
