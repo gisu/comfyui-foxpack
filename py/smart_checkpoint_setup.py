@@ -74,7 +74,7 @@ class SetupSelector:
 
     if (len(settings) < 5):
         # meta infos: version (3=3.x,x=xl,1=1.5), clip, vae (b = intern  / x = external)
-        meta = "v=xl,c=2,vae=baked"
+        meta = "xl,-2,baked"
     else:
         meta = settings[4]
 
