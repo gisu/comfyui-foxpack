@@ -83,7 +83,7 @@ class SetupSelector:
         meta = settings[4]
 
     setup = list(settings)
-    setup_text = f"cfg: {float(settings[0])} | steps: {settings[1]} | scheduler: {settings[2]} | sampler: {settings[3]}"
+    setup_text = f"cfg: {settings[0]} | steps: {settings[1]} | scheduler: {settings[2]} | sampler: {settings[3]}"
     return (
       str(settings[0]), 
       str(settings[1]), 
