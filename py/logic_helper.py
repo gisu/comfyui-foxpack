@@ -198,7 +198,7 @@ class Split_Entry_In_2Chunks:
       }
     }
 
-  RETURN_TYPES = ("STRING","STRING")
+  RETURN_TYPES = (any_type,any_type)
   RETURN_NAMES = ("value1","value2")
   OUTPUT_NODE = True
 
@@ -255,7 +255,7 @@ class Split_Entry_In_4Chunks:
       }
     }
 
-  RETURN_TYPES = ("STRING","STRING","STRING","STRING")
+  RETURN_TYPES = (any_type,any_type,any_type,any_type)
   RETURN_NAMES = ("value1","value2","value3","value4")
   OUTPUT_NODE = True
 
@@ -293,8 +293,7 @@ class Split_Entry_In_4Chunks:
       output
     )
 
-    
-class Split_Entry_In_4Chunks:
+class Split_Entry_In_6Chunks:
   def __init__(self):
     pass
 
@@ -317,8 +316,8 @@ class Split_Entry_In_4Chunks:
       }
     }
 
-  RETURN_TYPES = ("STRING","STRING","STRING","STRING")
-  RETURN_NAMES = ("value1","value2","value3","value4")
+  RETURN_TYPES = (any_type,any_type,any_type,any_type,any_type,any_type)
+  RETURN_NAMES = ("value1","value2","value3","value4","value5","value6")
   OUTPUT_NODE = True
 
   FUNCTION = "main"
@@ -338,52 +337,6 @@ class Split_Entry_In_4Chunks:
       arr = [bool(x) for x in arr]
     elif output_type == "list":
       arr = [list(x) for x in arr]
-
-    output = None
-    if (length == 0):
-      output = ("", "", "", "", "", "")
-    elif (length == 1):
-      output = (arr[0], "", "", "", "", "")
-    elif (length == 2):
-      output = (arr[0], arr[1], "", "", "", "")
-    elif (length == 3):
-      output = (arr[0], arr[1], arr[2], "", "", "")
-    else:
-      output = (arr[0], arr[1], arr[2], arr[3], "", "") 
-      
-    return (
-      output
-    )
-
-class Split_Entry_In_6Chunks:
-  def __init__(self):
-    pass
-
-  @classmethod
-  def INPUT_TYPES(s):
-    return {
-      "required": {
-        "seperator": ("STRING", {
-          "default": ",",
-        }),
-        "options": ("STRING", {
-          "forceInput": True
-        })
-      }
-    }
-
-  RETURN_TYPES = ("STRING","STRING","STRING","STRING","STRING","STRING")
-  RETURN_NAMES = ("value1","value2","value3","value4","value5","value6")
-  OUTPUT_NODE = True
-
-  FUNCTION = "main"
-
-  CATEGORY = "Foxpack/Logic"
-
-  def main(self, seperator, options):
-    arr = options.split(seperator)
-    length = len(arr)
-    arr = [x.strip() for x in arr]
 
     output = None
     if (length == 0):
