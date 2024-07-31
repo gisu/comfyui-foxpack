@@ -77,7 +77,7 @@ class SetupSelector:
     print(len(settings))
 
     if (len(settings) < 5):
-        # meta infos: version (0:sdxl, 1:sd15), clip, vae (0: baked, 1: not baked)
+        # meta infos: version (0:sdxl, 1:sd15), clip, vae (0: baked, 1: sdxl load vae, 2: sd15 load vae)
         meta = default_meta
     else:
         meta = settings[4]
@@ -125,7 +125,7 @@ class CheckpointMetaExtractor:
     
     return (
       int(version),
-      -abs(clip),
+      int(-abs(clip)),
       int(vae)
     )
 
