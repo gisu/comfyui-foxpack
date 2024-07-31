@@ -189,6 +189,12 @@ class Split_Entry_In_2Chunks:
         "options": ("STRING", {
           "forceInput": True
         })
+      },
+      "optional": {
+        "output_type": (["string", "int", "float", "boolean", "list"],
+        {
+          "default": "string"
+        }),
       }
     }
 
@@ -200,10 +206,19 @@ class Split_Entry_In_2Chunks:
 
   CATEGORY = "Foxpack/Logic"
 
-  def main(self, seperator, options):
+  def main(self, seperator, options, output_type):
     arr = options.split(seperator)
     length = len(arr)
     arr = [x.strip() for x in arr]
+
+    if output_type == "int":
+      arr = [int(x) for x in arr]
+    elif output_type == "float":
+      arr = [float(x) for x in arr]
+    elif output_type == "boolean":
+      arr = [bool(x) for x in arr]
+    elif output_type == "list":
+      arr = [list(x) for x in arr]
 
     output = None
     if (length == 0):
@@ -231,6 +246,12 @@ class Split_Entry_In_4Chunks:
         "options": ("STRING", {
           "forceInput": True
         })
+      },
+      "optional": {
+        "output_type": (["string", "int", "float", "boolean", "list"],
+        {
+          "default": "string"
+        }),
       }
     }
 
@@ -242,10 +263,19 @@ class Split_Entry_In_4Chunks:
 
   CATEGORY = "Foxpack/Logic"
 
-  def main(self, seperator, options):
+  def main(self, seperator, options, output_type):
     arr = options.split(seperator)
     length = len(arr)
     arr = [x.strip() for x in arr]
+
+    if output_type == "int":
+      arr = [int(x) for x in arr]
+    elif output_type == "float":
+      arr = [float(x) for x in arr]
+    elif output_type == "boolean":
+      arr = [bool(x) for x in arr]
+    elif output_type == "list":
+      arr = [list(x) for x in arr]
 
     output = None
     if (length == 0):
@@ -278,6 +308,12 @@ class Split_Entry_In_4Chunks:
         "options": ("STRING", {
           "forceInput": True
         })
+      },
+      "optional": {
+        "output_type": (["string", "int", "float", "boolean", "list"],
+        {
+          "default": "string"
+        }),
       }
     }
 
@@ -289,10 +325,19 @@ class Split_Entry_In_4Chunks:
 
   CATEGORY = "Foxpack/Logic"
 
-  def main(self, seperator, options):
+  def main(self, seperator, options, output_type):
     arr = options.split(seperator)
     length = len(arr)
     arr = [x.strip() for x in arr]
+
+    if output_type == "int":
+      arr = [int(x) for x in arr]
+    elif output_type == "float":
+      arr = [float(x) for x in arr]
+    elif output_type == "boolean":
+      arr = [bool(x) for x in arr]
+    elif output_type == "list":
+      arr = [list(x) for x in arr]
 
     output = None
     if (length == 0):
