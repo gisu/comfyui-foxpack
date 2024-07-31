@@ -1,0 +1,14 @@
+[project]
+name = "comfyui-foxpack"
+description = "Collection of nodes for the automation of workflows"
+version = "1.0.0"
+license = {file = "LICENSE"}
+
+[project.urls]
+Repository = "https://github.com/gisu/comfyui-foxpack"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = ""
+DisplayName = "comfyui-foxpack"
+Icon = ""
