@@ -6,6 +6,8 @@ class Big_Prompter:
   def INPUT_TYPES(s):
     return {
       "required": {
+        "base_setup": ("STRING", {
+          })
         "prompt": ("STRING", {
           "forceInput": True
         }),
