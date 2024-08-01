@@ -32,8 +32,12 @@ class Universal_VAE_Loader:
   CATEGORY = "Foxpack/Loader"
 
   def main(self, checkpoint_vae, vae_type, vae_sdxl, vae_sd15):
+    if (vae_type == 0):
+      return (
+        checkpoint_vae,
+      )
+      
     vae_name = {
-      0: checkpoint_vae,
       1: vae_sdxl,
       2: vae_sd15
     }.get(vae_type, checkpoint_vae)
