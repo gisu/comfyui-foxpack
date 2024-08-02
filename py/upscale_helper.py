@@ -1,5 +1,5 @@
 import comfy.samplers
-from nodes import CLIPTextEncode
+from nodes import CLIPTextEncode, ConditioningCombine
 
 class Step_Denoise:
   def __init__(self):
@@ -164,8 +164,9 @@ class Refine_Prompt:
     additional_pos_cond = CLIPTextEncode().encode(clip, refine_prompt_pos)
     additional_neg_cond = CLIPTextEncode().encode(clip, refine_prompt_neg)
 
-    combined_pos_cond = comfy.utils.combine_conditioning(pos_prompt, additional_pos_cond)
-    combined_neg_cond = comfy.utils.combine_conditioning(neg_prompt, additional_neg_cond)
+    combined_pos_cond = pos_prompt + additional_pos_cond[0]
+    combined_neg_cond = neg_prompt + additional_neg_cond[0]
+   
     
     return (
       combined_pos_cond,
