@@ -1,4 +1,6 @@
 import torch
+from nodes import EmptyLatentImage
+
 class UniversalLatentHelper:
     def __init__(self):
       pass
@@ -61,9 +63,13 @@ class UniversalLatentHelper:
       if (format == "portrait"):
           width, height = height, width
 
+      height == height // 8
+      width == width // 8
+
       print(f"Width: {width}, Height: {height}")
 
-      latent = torch.zeros([batch_size, 4, height // 8, width // 8])
+      # latent = torch.zeros([batch_size, 4, as width // 8])
+      latent = EmptyLatentImage().generate(width, height, batch_size)[0]
       
       return (
           int(width),
