@@ -68,8 +68,7 @@ class UniversalLatentHelper:
 
       print(f"Width: {width}, Height: {height}")
 
-      # latent = torch.zeros([batch_size, 4, as width // 8])
-      latent = EmptyLatentImage().generate(width, height, batch_size)[0]
+      latent = torch.zeros([batch_size, 4, height // 8, width // 8])
       
       return (
           int(width),
