@@ -65,14 +65,14 @@ class Refine_Setup:
         "used_cfg": ("FLOAT", {
           "forceInput": True,
         }),
-        "used_steps": ("FLOAT", {
+        "used_steps": ("INT", {
           "forceInput": True,
         }),
-        "used_scheduler": ("STRING", {
+        "used_scheduler": ("COMBO", {
           "multiline": False,
           "forceInput": True,
         }),
-        "used_sampler": ("STRING", {
+        "used_sampler": ("COMBO", {
           "multiline": False,
           "forceInput": True,
         }),
