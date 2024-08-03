@@ -43,6 +43,28 @@ def is_none(value):
       return is_context_empty(value)
   return value is None
 
+def variable_output_arr(separator, options, output_type, max_length: int = 2):
+    if (type(options) == str):
+      arr = [x.strip() for x in options.split(separator)]
+    else:
+      arr = options
+    
+    type_conversions = {
+        "int": int,
+        "float": float,
+        "boolean": bool,
+        "list": list,
+    }
+
+    if output_type in type_conversions:
+        arr = [type_conversions[output_type](x) for x in arr]
+
+    arr.extend([""] * (max_length - len(arr)))
+
+    output = tuple(arr[:max_length])
+
+    return output
+
 class Remap_Values:
   def __init__(self):
     pass
@@ -229,29 +251,8 @@ class Split_Entry_In_2Chunks:
   CATEGORY = "Foxpack/Logic"
 
   def main(self, seperator, options, output_type):
-    arr = options.split(seperator)
-    length = len(arr)
-    arr = [x.strip() for x in arr]
-
-    if output_type == "int":
-      arr = [int(x) for x in arr]
-    elif output_type == "float":
-      arr = [float(x) for x in arr]
-    elif output_type == "boolean":
-      arr = [bool(x) for x in arr]
-    elif output_type == "list":
-      arr = [list(x) for x in arr]
-
-    output = None
-    if (length == 0):
-      output = ("", "")
-    elif (length == 1):
-      output = (arr[0], "")
-    else:
-      output = (arr[0], arr[1])
-      
     return (
-      output
+      variable_output_arr(seperator, options, output_type, 2)
     )
 
 class Split_Entry_In_4Chunks:
@@ -286,33 +287,8 @@ class Split_Entry_In_4Chunks:
   CATEGORY = "Foxpack/Logic"
 
   def main(self, seperator, options, output_type):
-    arr = options.split(seperator)
-    length = len(arr)
-    arr = [x.strip() for x in arr]
-
-    if output_type == "int":
-      arr = [int(x) for x in arr]
-    elif output_type == "float":
-      arr = [float(x) for x in arr]
-    elif output_type == "boolean":
-      arr = [bool(x) for x in arr]
-    elif output_type == "list":
-      arr = [list(x) for x in arr]
-
-    output = None
-    if (length == 0):
-      output = ("", "", "", "")
-    elif (length == 1):
-      output = (arr[0], "", "", "")
-    elif (length == 2):
-      output = (arr[0], arr[1], "", "")
-    elif (length == 3):
-      output = (arr[0], arr[1], arr[2], "")
-    else:
-      output = (arr[0], arr[1], arr[2], arr[3]) 
-      
     return (
-      output
+      variable_output_arr(seperator, options, output_type, 4)
     )
 
 class Split_Entry_In_6Chunks:
@@ -347,40 +323,208 @@ class Split_Entry_In_6Chunks:
   CATEGORY = "Foxpack/Logic"
 
   def main(self, seperator, options, output_type):
-    arr = options.split(seperator)
-    length = len(arr)
-    arr = [x.strip() for x in arr]
+    # arr = options.split(seperator)
+    # length = len(arr)
+    # arr = [x.strip() for x in arr]
 
-    if output_type == "int":
-      arr = [int(x) for x in arr]
-    elif output_type == "float":
-      arr = [float(x) for x in arr]
-    elif output_type == "boolean":
-      arr = [bool(x) for x in arr]
-    elif output_type == "list":
-      arr = [list(x) for x in arr]
+    # if output_type == "int":
+    #   arr = [int(x) for x in arr]
+    # elif output_type == "float":
+    #   arr = [float(x) for x in arr]
+    # elif output_type == "boolean":
+    #   arr = [bool(x) for x in arr]
+    # elif output_type == "list":
+    #   arr = [list(x) for x in arr]
 
-    output = None
-    if (length == 0):
-      output = ("", "", "", "", "", "")
-    elif (length == 1):
-      output = (arr[0], "", "", "", "", "")
-    elif (length == 2):
-      output = (arr[0], arr[1], "", "", "", "")
-    elif (length == 3):
-      output = (arr[0], arr[1], arr[2], "", "", "")
-    elif (length == 4):
-      output = (arr[0], arr[1], arr[2], arr[3], "", "") 
-    elif (length == 5):
-      output = (arr[0], arr[1], arr[2], arr[3], arr[4], "")
-    else:
-      output = (arr[0], arr[1], arr[2], arr[3], arr[4], arr[5])
+    # output = None
+    # if (length == 0):
+    #   output = ("", "", "", "", "", "")
+    # elif (length == 1):
+    #   output = (arr[0], "", "", "", "", "")
+    # elif (length == 2):
+    #   output = (arr[0], arr[1], "", "", "", "")
+    # elif (length == 3):
+    #   output = (arr[0], arr[1], arr[2], "", "", "")
+    # elif (length == 4):
+    #   output = (arr[0], arr[1], arr[2], arr[3], "", "") 
+    # elif (length == 5):
+    #   output = (arr[0], arr[1], arr[2], arr[3], arr[4], "")
+    # else:
+    #   output = (arr[0], arr[1], arr[2], arr[3], arr[4], arr[5])
       
     return (
-      output
+      variable_output_arr(seperator, options, output_type, 6)
+    )
+
+class Split_Entry_In_8Chunks:
+  def __init__(self):
+    pass
+
+  @classmethod
+  def INPUT_TYPES(s):
+    return {
+      "required": {
+        "seperator": ("STRING", {
+          "default": ",",
+        }),
+        "options": ("STRING", {
+          "forceInput": True
+        })
+      },
+      "optional": {
+        "output_type": (["string", "int", "float", "boolean", "list"],
+        {
+          "default": "string"
+        }),
+      }
+    }
+
+  RETURN_TYPES = (any_type,any_type,any_type,any_type,any_type,any_type,any_type,any_type)
+  RETURN_NAMES = ("value1","value2","value3","value4","value5","value6","value7","value8")
+  OUTPUT_NODE = True
+
+  FUNCTION = "main"
+
+  CATEGORY = "Foxpack/Logic"
+
+  def main(self, seperator, options, output_type):
+    return (
+      variable_output_arr(seperator, options, output_type, 8)
+    )
+
+class Change_Entry_From_List:
+  def __init__(self):
+    pass
+
+  @classmethod
+  def INPUT_TYPES(s):
+    return {
+      "required": {
+        "index": ("INT", {
+          "default": 0,
+        }),
+        "options": ("LIST", {
+          "forceInput": True
+        }),
+        "change_value": (any_type, {
+          "forceInput": True
+        })
+      }
+    }
+
+  RETURN_TYPES = ("LIST",)
+  RETURN_NAMES = ("list",)
+
+  FUNCTION = "main"
+
+  CATEGORY = "Foxpack/Logic"
+
+  def main(self, index, options, change_value):
+    # change an entry in a list
+    options[index] = change_value
+    return (
+      options,
+    )
+
+class Change_Entries_In_A_List:
+  def __init__(self):
+    pass
+
+  @classmethod
+  def INPUT_TYPES(s):
+    return {
+      "required": {
+        "indexes": ("STRING", {
+          "default": "",
+        }),
+        "options": ("LIST", {
+          "forceInput": True
+        }),
+        "change_values": ("LIST", {
+          "forceInput": True
+        })
+      }
+    }
+
+  RETURN_TYPES = ("LIST",)
+  RETURN_NAMES = ("list",)
+
+  FUNCTION = "main"
+
+  CATEGORY = "Foxpack/Logic"
+
+  def main(self, indexes, options, change_values):
+    indexes = [int(x) for x in indexes.split(",")]
+    for i, index in enumerate(indexes):
+      options[index] = change_values[i]
+      
+    return (
+      options,
+    )
+
+class Pick_Values_From_List:
+  def __init__(self):
+    pass
+
+  @classmethod
+  def INPUT_TYPES(s):
+    return {
+      "required": {
+        "options": ("LIST", {
+          "forceInput": True
+        }),
+        "indexes": ("STRING", {
+          "default": "",
+        })
+      }
+    }
+
+  RETURN_TYPES = ("LIST",)
+  RETURN_NAMES = ("options",)
+
+  FUNCTION = "main"
+
+  CATEGORY = "Foxpack/Logic"
+
+  def main(self, indexes, options):
+    indexes = [int(x) for x in indexes.split(",")]
+    options = [options[x] for x in indexes]
+    return (
+      options,
+    )
+
+class Remove_Values_From_List:
+  def __init__(self):
+    pass
+
+  @classmethod
+  def INPUT_TYPES(s):
+    return {
+      "required": {
+        "options": ("LIST", {
+          "forceInput": True
+        }),
+        "indexes": ("STRING", {
+          "default": "",
+        })
+      }
+    }
+
+  RETURN_TYPES = ("LIST",)
+  RETURN_NAMES = ("options",)
+
+  FUNCTION = "main"
+
+  CATEGORY = "Foxpack/Logic"
+
+  def main(self, indexes, options):
+    indexes = [int(x) for x in indexes.split(",")]
+    options = [options[x] for x in range(len(options)) if x not in indexes]
+    
+    return (
+      options,
     )
   
-
 class Show_Type:
   def __init__(self):
     pass
@@ -539,6 +683,18 @@ class Add_To_List:
           "forceInput": True
         }),
         "item6": (any_type, {
+          "forceInput": True
+        }),
+        "item7": (any_type, {
+          "forceInput": True
+        }),
+        "item8": (any_type, {
+          "forceInput": True
+        }),
+        "item9": (any_type, {
+          "forceInput": True
+        }),
+        "item10": (any_type, {
           "forceInput": True
         }),
       }
