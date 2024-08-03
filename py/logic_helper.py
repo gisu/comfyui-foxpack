@@ -616,7 +616,6 @@ class Convert_Into:
     elif output_type == "boolean":
       output = bool(value)
     elif output_type == "list":
-      # if value is value a string and is comma seperated
       if (type(value) == str):
         value = value.split(seperator)
         value = [int(x) if x.isdigit() else float(x) if x.replace(".", "", 1).isdigit() else x for x in value]
@@ -632,12 +631,11 @@ class Add_To_List:
   @classmethod
   def INPUT_TYPES(s):
     return {
-      "required": {
+      "required": {},
+      "optional": {
         "list": ("LIST", {
           "forceInput": True
         }),
-      },
-      "optional": {
         "item1": (any_type, {
           "forceInput": True
         }),
@@ -689,4 +687,49 @@ class Add_To_List:
     return (
       new_list,
     )
+
+class Override_Value_If_Unset:
+  def __init__(self):
+    pass
+
+  @classmethod
+  def INPUT_TYPES(s):
+    return {
+      "required": {
+        "replace_value": ("STRING", {
+          "default": "0",
+          "forceInput": True,
+        }),
+        "replace_type": (["string", "int", "float", "boolean", "list"], {
+          "default": "string",
+          "forceInput": True,
+        }),
+      },
+      "optional": {
+        "value": (any_type, {
+          "forceInput": True
+        }),
+      }
+    }
+
+  RETURN_TYPES = (any_type,)
+  RETURN_NAMES = ("value",)
+
+  FUNCTION = "main"
+
+  CATEGORY = "Foxpack/Logic"
+
+  def main(self, replaced_value, replace_type, value):
+    if value: 
+      return (value,)
+    if replace_type == "string":
+      return (replaced_value,)
+    elif replace_type == "int":
+      return (int(replaced_value),)
+    elif replace_type == "float":
+      return (float(replaced_value),)
+    elif replace_type == "boolean":
+      return (bool(replaced_value),)
+    elif replace_type == "list":
+      return ([replaced_value],)
     
