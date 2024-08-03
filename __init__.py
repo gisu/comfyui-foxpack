@@ -1,6 +1,6 @@
 from .py.smart_checkpoint_setup import SetupSelector, BaseSamplerSetup, OverrideSamplerSetup, CheckpointMetaExtractor
 from .py.latent_helper import UniversalLatentHelper
-from .py.logic_helper import Remap_Values, Negate_Boolean, Select_String_By_Index, Select_By_Index, Show_Type, Select_Line_By_Index, Split_Entry_In_2Chunks, Split_Entry_In_4Chunks, Split_Entry_In_6Chunks
+from .py.logic_helper import Remap_Values, Negate_Boolean, Select_String_By_Index, Select_By_Index, Show_Type, Select_Line_By_Index, Split_Entry_In_2Chunks, Split_Entry_In_4Chunks, Split_Entry_In_6Chunks, Convert_Into
 from .py.loader_helper import Universal_VAE_Loader
 from .py.upscale_helper import Step_Denoise, Refine_Setup, Refine_Prompt
 
@@ -24,7 +24,8 @@ NODE_CLASS_MAPPINGS = {
     "Universal_VAE_Loader": Universal_VAE_Loader,
     "Step_Denoise": Step_Denoise,
     "Refine_Setup": Refine_Setup,
-    "Refine_Prompt": Refine_Prompt
+    "Refine_Prompt": Refine_Prompt,
+    "Convert_Into": Convert_Into
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -45,7 +46,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Universal_VAE_Loader": "Universal VAE Loader",
     "Step_Denoise": "Step Denoise",
     "Refine_Setup": "Refine Setup",
-    "Refine_Prompt": "Refine Prompt"
+    "Refine_Prompt": "Refine Prompt",
+    "Convert_Into": "Convert Into"
 }
 
 EXTENSION_NAME = "ComfUI-Foxpack"

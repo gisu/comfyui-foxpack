@@ -138,7 +138,7 @@ class Select_By_Index:
         "options": ("STRING", {
           "forceInput": True
         }),
-        "output_type": (["string", "int", "float", "boolean", "list"],
+        "output_type": (["input","string", "int", "float", "boolean", "list"],
         {
           "default": "string"
         }),
@@ -170,6 +170,8 @@ class Select_By_Index:
       param = bool(entry)
     elif output_type == "list":
       param = [entry]
+    else :
+      param = entry
       
     return (
       param,
@@ -434,3 +436,61 @@ class Select_Line_By_Index:
     return (
       str(selected_option),
     )
+
+
+class Convert_Into:
+  def __init__(self):
+    pass
+
+  @classmethod
+  def INPUT_TYPES(s):
+    return {
+      "required": {
+        "value": (any_type, {
+          "forceInput": True
+        }),
+        "seperator": ("STRING", {
+          "default": ",",
+        }),
+        "output_type": (["string", "int", "float", "boolean", "list"],
+        {
+          "default": "string"
+        }),
+      }
+    }
+
+  RETURN_TYPES = (any_type,)
+  RETURN_NAMES = ("value",)
+
+  FUNCTION = "main"
+
+  CATEGORY = "Foxpack/Logic"
+
+  def main(self, value, output_type, seperator):
+    output = None
+
+
+    if output_type == "string":
+      if (type(value) == list):
+        value = [str(x) for x in value]
+        value = seperator.join(value)
+      output = str(value)
+    elif output_type == "int":
+      output = int(value)
+    elif output_type == "float":
+      output = float(value)
+    elif output_type == "boolean":
+      output = bool(value)
+    elif output_type == "list":
+      # if value is value a string and is comma seperated
+      if (type(value) == str):
+        value = value.split(seperator)
+        value = [int(x) if x.isdigit() else float(x) if x.replace(".", "", 1).isdigit() else x for x in value]
+        output = value
+      else:
+        output = [value]
+
+    return (
+      output,
+    )
+    
