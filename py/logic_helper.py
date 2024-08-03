@@ -230,7 +230,7 @@ class Split_Entry_In_2Chunks:
         "seperator": ("STRING", {
           "default": ",",
         }),
-        "options": ("STRING", {
+        "options": (any_type, {
           "forceInput": True
         })
       },
@@ -266,7 +266,7 @@ class Split_Entry_In_4Chunks:
         "seperator": ("STRING", {
           "default": ",",
         }),
-        "options": ("STRING", {
+        "options": (any_type, {
           "forceInput": True
         })
       },
@@ -302,7 +302,7 @@ class Split_Entry_In_6Chunks:
         "seperator": ("STRING", {
           "default": ",",
         }),
-        "options": ("STRING", {
+        "options": (any_type, {
           "forceInput": True
         })
       },
@@ -323,35 +323,6 @@ class Split_Entry_In_6Chunks:
   CATEGORY = "Foxpack/Logic"
 
   def main(self, seperator, options, output_type):
-    # arr = options.split(seperator)
-    # length = len(arr)
-    # arr = [x.strip() for x in arr]
-
-    # if output_type == "int":
-    #   arr = [int(x) for x in arr]
-    # elif output_type == "float":
-    #   arr = [float(x) for x in arr]
-    # elif output_type == "boolean":
-    #   arr = [bool(x) for x in arr]
-    # elif output_type == "list":
-    #   arr = [list(x) for x in arr]
-
-    # output = None
-    # if (length == 0):
-    #   output = ("", "", "", "", "", "")
-    # elif (length == 1):
-    #   output = (arr[0], "", "", "", "", "")
-    # elif (length == 2):
-    #   output = (arr[0], arr[1], "", "", "", "")
-    # elif (length == 3):
-    #   output = (arr[0], arr[1], arr[2], "", "", "")
-    # elif (length == 4):
-    #   output = (arr[0], arr[1], arr[2], arr[3], "", "") 
-    # elif (length == 5):
-    #   output = (arr[0], arr[1], arr[2], arr[3], arr[4], "")
-    # else:
-    #   output = (arr[0], arr[1], arr[2], arr[3], arr[4], arr[5])
-      
     return (
       variable_output_arr(seperator, options, output_type, 6)
     )
@@ -367,7 +338,7 @@ class Split_Entry_In_8Chunks:
         "seperator": ("STRING", {
           "default": ",",
         }),
-        "options": ("STRING", {
+        "options": (any_type, {
           "forceInput": True
         })
       },
