@@ -4,6 +4,16 @@ class AnyType(str):
 
 any_type = AnyType("*")
 
+class DynamicInputType(dict):
+  def __init__(self, type):
+    self.type = type
+
+  def __getitem__(self, key):
+    return (self.type, )
+
+  def __contains__(self, key):
+    return True
+
 class TautologyStr(str):
   def __ne__(self, other):
     return False
@@ -23,6 +33,15 @@ class ByPassTypeTuple(tuple):
     if isinstance(item, str):
       return TautologyStr(item)
     return item
+
+def is_context_empty(ctx):
+  return not ctx or all(v is None for v in ctx.values())
+
+def is_none(value):
+  if value is not None:
+    if isinstance(value, dict) and 'model' in value and 'clip' in value:
+      return is_context_empty(value)
+  return value is None
 
 class Remap_Values:
   def __init__(self):
@@ -135,8 +154,11 @@ class Select_By_Index:
         "index": ("INT", {
           "default": 0,
         }),
-        "options": ("STRING", {
+        "options": (any_type, {
           "forceInput": True
+        }),
+        "seperator": ("STRING", {
+          "default": ",",
         }),
         "output_type": (["input","string", "int", "float", "boolean", "list"],
         {
@@ -152,26 +174,24 @@ class Select_By_Index:
 
   CATEGORY = "Foxpack/Logic"
 
-  def main(self, index, options, output_type):
-    arr = options.split(",")
-    length = len(arr)
-    index = index if index < length else length - 1
-    entry = arr[index]
+  def main(self, index, options, output_type, seperator):
+    entry = None
 
-    param = None
+    if isinstance(options, (str, list)):
+      arr = options.split(seperator) if isinstance(options, str) else options
+      entry = arr[min(index, len(arr) - 1)]
+    else:
+      entry = options
 
-    if output_type == "string":
-      param = str(entry)
-    elif output_type == "int":
-      param = int(entry)
-    elif output_type == "float":
-      param = float(entry)
-    elif output_type == "boolean":
-      param = bool(entry)
-    elif output_type == "list":
-      param = [entry]
-    else :
-      param = entry
+    conversion_map = {
+      "string": str,
+      "int": int,
+      "float": float,
+      "boolean": bool,
+      "list": lambda x: [x]
+    } 
+
+    param = conversion_map.get(output_type, lambda x: x)(entry)
       
     return (
       param,
@@ -469,7 +489,6 @@ class Convert_Into:
   def main(self, value, output_type, seperator):
     output = None
 
-
     if output_type == "string":
       if (type(value) == list):
         value = [str(x) for x in value]
@@ -492,5 +511,55 @@ class Convert_Into:
 
     return (
       output,
+    )
+
+class Add_To_List:
+  @classmethod
+  def INPUT_TYPES(s):
+    return {
+      "required": {
+        "list": ("LIST", {
+          "forceInput": True
+        }),
+      },
+      "optional": {
+        "item1": (any_type, {
+          "forceInput": True
+        }),
+        "item2": (any_type, {
+          "forceInput": True
+        }),
+        "item3": (any_type, {
+          "forceInput": True
+        }),
+        "item4": (any_type, {
+          "forceInput": True
+        }),
+        "item5": (any_type, {
+          "forceInput": True
+        }),
+        "item6": (any_type, {
+          "forceInput": True
+        }),
+      }
+    }
+
+  RETURN_TYPES = ("LIST",)
+  RETURN_NAMES = ("list",)
+
+  FUNCTION = "main"
+
+  CATEGORY = "Foxpack/Logic"
+
+  def main(self, **kwargs):
+    new_list = kwargs.get("list", [])
+    new_list = [x for x in new_list if x is not None]
+    
+    for key, value in kwargs.items():
+      if key.startswith('item') and value is not None:
+        new_list.append(value)
+    
+    return (
+      new_list,
     )
     
