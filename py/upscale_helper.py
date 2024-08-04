@@ -1,6 +1,10 @@
 import comfy.samplers
 from nodes import CLIPTextEncode
+class AnyType(str):
+    def __ne__(self, __value: object) -> bool:
+        return False
 
+any_type = AnyType("*")
 class Step_Denoise:
   def __init__(self):
     pass
@@ -68,10 +72,10 @@ class Refine_Setup:
         "used_steps": ("INT", {
           "forceInput": True,
         }),
-        "used_scheduler": ("STRING", {
+        "used_scheduler": (any_type, {
           "forceInput": True,
         }),
-        "used_sampler": ("STRING", {
+        "used_sampler": (any_type, {
           "forceInput": True,
         }),
         "disable_override": ("BOOLEAN", {
