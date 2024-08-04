@@ -1,5 +1,5 @@
 import comfy.samplers
-from nodes import CLIPTextEncode, ConditioningCombine
+from nodes import CLIPTextEncode
 
 class Step_Denoise:
   def __init__(self):
@@ -68,12 +68,10 @@ class Refine_Setup:
         "used_steps": ("INT", {
           "forceInput": True,
         }),
-        "used_scheduler": ("COMBO", {
-          "multiline": False,
+        "used_scheduler": ("STRING", {
           "forceInput": True,
         }),
-        "used_sampler": ("COMBO", {
-          "multiline": False,
+        "used_sampler": ("STRING", {
           "forceInput": True,
         }),
         "disable_override": ("BOOLEAN", {
