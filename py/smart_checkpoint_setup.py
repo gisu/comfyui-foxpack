@@ -1,4 +1,29 @@
 import comfy.samplers
+import folder_paths
+import os
+
+class CheckpointSelector: 
+  @classmethod
+  def INPUT_TYPES(cls):
+    return {
+      "required": {
+        "checkpoint_name": (folder_paths.get_filename_list("checkpoints"),),
+      }
+    }
+
+  RETURN_TYPES = (folder_paths.get_filename_list("checkpoints"), "STRING")
+  RETURN_NAMES = ("ckpt_name", "name_str")
+  CATEGORY = "Foxpack/Smart Sampler Setup"
+  FUNCTION = "main" 
+
+  def main(self, checkpoint_name):
+    cleanup_name = os.path.splitext(os.path.basename(checkpoint_name))[0]
+    
+    return (
+      checkpoint_name, 
+      str(cleanup_name)
+    )
+    
 
 class SetupSelector:
   def __init__(self):
@@ -74,8 +99,6 @@ class SetupSelector:
 
     settings = return_string.split(delmiter)
 
-    print(len(settings))
-
     if (len(settings) < 5):
         # meta infos: version (0:sdxl, 1:sd15), clip, vae (0: baked, 1: sdxl load vae, 2: sd15 load vae)
         meta = default_meta
@@ -84,6 +107,7 @@ class SetupSelector:
 
     setup = list(settings)
     setup_text = f"cfg: {settings[0]} | steps: {settings[1]} | scheduler: {settings[2]} | sampler: {settings[3]}"
+    
     return (
       str(settings[0]), 
       str(settings[1]), 
@@ -93,8 +117,6 @@ class SetupSelector:
       list(setup), 
       str(meta)
     )
-    
-
 class CheckpointMetaExtractor:
   def __init__(self):
     pass
