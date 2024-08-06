@@ -1,3 +1,4 @@
+import ast
 class AnyType(str):
     def __ne__(self, __value: object) -> bool:
         return False
@@ -732,4 +733,52 @@ class Override_Value_If_Unset:
       return (bool(replaced_value),)
     elif replace_type == "list":
       return ([replaced_value],)
+
+class Pick_Value_From_Dict:
+  def __init__(self):
+    pass
+
+  @classmethod
+  def INPUT_TYPES(s):
+    return {
+      "required": {
+        "dict": ("STRING", {
+          "forceInput": True
+        }),
+        "key": ("STRING", {
+          "default": "",
+        }),
+        "default_return": ("STRING", {
+          "default": "",
+        }),
+        "return_type": (["string", "int", "float", "boolean", "list"],
+        {
+          "default": "string"
+        }),
+      }
+    }
+
+  RETURN_TYPES = (any_type,)
+  RETURN_NAMES = ("value",)
+
+  FUNCTION = "main"
+
+  CATEGORY = "Foxpack/Logic"
+
+  def main(self, dict, key, default_return, return_type):
+    dict_str = "{" + dict + "}"
+    dictionary = ast.literal_eval(dict_str)
     
+    value = dictionary.get(key)
+    if value is None:
+      if return_type == "string":
+        return (default_return,)
+      elif return_type == "int":
+        return (int(default_return),)
+      elif return_type == "float":
+        return (float(default_return),)
+      elif return_type == "boolean":
+        return (bool(default_return),)
+      elif return_type == "list":
+        return ([default_return],)
+    return (value,)

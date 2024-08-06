@@ -18,7 +18,7 @@ class UniversalLatentHelper:
           "2:1",
           "2.39:1",
           "21:9",
-          ]
+        ]
       
         return {
             "required": {

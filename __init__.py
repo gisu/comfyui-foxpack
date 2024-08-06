@@ -1,8 +1,9 @@
-from .py.smart_checkpoint_setup import SetupSelector, BaseSamplerSetup, OverrideSamplerSetup, CheckpointMetaExtractor, CheckpointSelector
+from .py.smart_checkpoint_setup import SetupSelector, BaseSamplerSetup, OverrideSamplerSetup, CheckpointMetaExtractor, CheckpointSelector, Complete_Setup
 from .py.latent_helper import UniversalLatentHelper
-from .py.logic_helper import Remap_Values, Negate_Boolean, Select_String_By_Index, Select_By_Index, Show_Type, Select_Line_By_Index, Split_Entry_In_2Chunks, Split_Entry_In_4Chunks, Split_Entry_In_6Chunks, Split_Entry_In_8Chunks, Convert_Into, Add_To_List, Change_Entry_From_List, Change_Entries_In_A_List, Pick_Values_From_List, Remove_Values_From_List, Override_Value_If_Unset
+from .py.logic_helper import Remap_Values, Negate_Boolean, Select_String_By_Index, Select_By_Index, Show_Type, Select_Line_By_Index, Split_Entry_In_2Chunks, Split_Entry_In_4Chunks, Split_Entry_In_6Chunks, Split_Entry_In_8Chunks, Convert_Into, Add_To_List, Change_Entry_From_List, Change_Entries_In_A_List, Pick_Values_From_List, Remove_Values_From_List, Override_Value_If_Unset, Pick_Value_From_Dict
 from .py.loader_helper import Universal_VAE_Loader
 from .py.upscale_helper import Step_Denoise, Refine_Setup, Refine_Prompt
+from .py.prompter import Big_Prompter
 
 
 
@@ -33,7 +34,10 @@ NODE_CLASS_MAPPINGS = {
     "Pick_Values_From_List": Pick_Values_From_List,
     "Remove_Values_From_List": Remove_Values_From_List,
     "Override_Value_If_Unset": Override_Value_If_Unset,
-    "CheckpointSelector": CheckpointSelector
+    "CheckpointSelector": CheckpointSelector,
+    "Complete_Setup": Complete_Setup,
+    "Pick_Value_From_Dict": Pick_Value_From_Dict,
+    "Big_Prompter": Big_Prompter
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -63,7 +67,10 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Pick_Values_From_List": "Pick Values From List",
     "Remove_Values_From_List": "Remove Values From List",
     "Override_Value_If_Unset": "Override Value If Unset",
-    "CheckpointSelector": "Checkpoint Selector"
+    "CheckpointSelector": "Checkpoint Selector",
+    "Complete_Setup": "Complete Setup",
+    "Pick_Value_From_Dict": "Pick Value From Dict",
+    "Big_Prompter": "Big Prompter"
 }
 
 EXTENSION_NAME = "ComfUI-Foxpack"

@@ -2,6 +2,51 @@ import comfy.samplers
 import folder_paths
 import os
 
+def clamp(value, min_value, max_value):
+  return max(min_value, min(value, max_value))
+
+def numeric_range(value):
+  if "-" in value:
+    parts = value.split("-")
+    return (float(parts[0]), float(parts[1]))
+  return (float(value), float(value))
+
+def clamp_in_list(value, lst):
+  if value in list(lst):
+    return value
+  return lst[0]
+
+def extract_setup(checkpoint_setups, cleanup_name, default_setup, delmiter = "/"):
+  index = checkpoint_setups.find(cleanup_name)
+  return_string = ""
+  
+  if index == -1:
+    return default_setup
+  
+  substring = checkpoint_setups[index + len(cleanup_name):]
+  
+  if substring.startswith('='):
+    substring = substring[1:]
+    
+    if substring.startswith('"'):
+      end_quote = substring.find('"', 1)
+      if end_quote != -1:
+        return_string = substring[1:end_quote]
+      else:
+        return_string = default_setup
+    else:
+      space_index = substring.find(" ")
+      if space_index != -1:
+        return_string = substring[:space_index]
+      else:
+        return_string = substring
+  else:
+    return_string = default_setup
+  
+  settings = return_string.split(delmiter)
+  
+  return settings
+
 class CheckpointSelector: 
   @classmethod
   def INPUT_TYPES(cls):
@@ -187,19 +232,19 @@ class BaseSamplerSetup:
   FUNCTION = "main"
 
   def main(self, setup, cfg, steps, scheduler, sampler): 
-    def clamp(value, min_value, max_value):
-        return max(min_value, min(value, max_value))
+    # def clamp(value, min_value, max_value):
+    #     return max(min_value, min(value, max_value))
 
-    def numeric_range(value):
-        if "-" in value:
-            parts = value.split("-")
-            return (float(parts[0]), float(parts[1]))
-        return (float(value), float(value))
+    # def numeric_range(value):
+    #     if "-" in value:
+    #         parts = value.split("-")
+    #         return (float(parts[0]), float(parts[1]))
+    #     return (float(value), float(value))
 
-    def clamp_in_list(value, lst):
-        if value in list(lst):
-            return value
-        return lst[0]
+    # def clamp_in_list(value, lst):
+    #     if value in list(lst):
+    #         return value
+    #     return lst[0]
       
     """main"""
     cfg_range = numeric_range(setup[0])
@@ -279,3 +324,137 @@ class OverrideSamplerSetup:
       )
 
     CATEGORY = "Foxpack/Smart Sampler Setup"
+
+class Complete_Setup:
+  @classmethod
+  def INPUT_TYPES(cls):
+    return {
+      "required": {
+        "checkpoint_setups": ("STRING", {
+          "forceInput": True,
+          "multiline": True
+        }),
+        
+        "checkpoint_name": (folder_paths.get_filename_list("checkpoints"),),
+        "cfg": ("FLOAT", {
+          "default": 1.0,
+          "min": 0.0,
+          "max": 16.0,
+          "step": 0.1,
+          "display": "number"
+        }),
+        "steps": ("INT", {
+          "default": 5,
+          "min": 1,
+          "max": 100,
+          "step": 1,
+          "display": "number"
+        }),
+        "scheduler": (comfy.samplers.KSampler.SCHEDULERS, {
+          "default": "linear"
+        }),
+        "sampler": (comfy.samplers.KSampler.SAMPLERS, {
+          "default": "karras"
+        }),
+        "override": ("BOOLEAN", {"default": False}),
+        "cfg_override": ("FLOAT", {
+          "default": 1.0,
+          "min": 0.0,
+          "max": 16.0,
+          "step": 0.1,
+          "display": "number"
+        }),
+        "steps_override": ("INT", {
+          "default": 5,
+          "min": 1,
+          "max": 100,
+          "step": 1,
+          "display": "number"
+        }),
+        "scheduler_override": (comfy.samplers.KSampler.SCHEDULERS, {
+          "default": "linear"
+        }),
+        "sampler_override": (comfy.samplers.KSampler.SAMPLERS, {
+          "default": "karras"
+        }),
+        "default_setup": ("STRING", { 
+          "default": "5/20/karras/dpmpp_2m",
+        }),
+        "default_meta": ("STRING", {
+          "default": "0,-2,0",
+        }),
+        # "extra_meta": ("STRING", {
+        #   "default": "{'version':'sdxl','clip':-2,'vae_variant':0, 'pony': True}",
+        # })
+      }
+    }
+
+  RETURN_TYPES = (folder_paths.get_filename_list("checkpoints"),"STRING", "STRING", "INT", "INT", "INT", "STRING", "STRING", "FLOAT","INT", comfy.samplers.KSampler.SAMPLERS, comfy.samplers.KSampler.SCHEDULERS)
+  RETURN_NAMES = ("ckpt_name", "recommended_setup_str", "used_setup_str", "version", "clip", "vae_variant", "opt_meta", "filename", "cfg", "steps", "sampler", "scheduler")
+
+  FUNCTION = "main"
+  CATEGORY = "Foxpack/Smart Sampler Setup"
+
+  def main(self, checkpoint_setups, checkpoint_name, cfg, steps, scheduler, sampler, override, cfg_override, steps_override, scheduler_override, sampler_override, default_setup, default_meta):
+    cleanup_name = "!" + os.path.splitext(os.path.basename(checkpoint_name))[0]
+
+    settings = extract_setup(checkpoint_setups, cleanup_name, default_setup)
+
+    recommended_setup_str = f"cfg: {settings[0]} | steps: {settings[1]} | scheduler: {settings[2]} | sampler: {settings[3]}"
+
+    version = 0
+    clip = -2
+    vae_variant = 0
+
+    meta = default_meta
+    if len(settings) >= 5:
+      meta = settings[4]
+    
+    meta = meta.split(",")
+    version = meta[0]
+    clip = int(meta[1])
+    vae_variant = meta[2]
+
+    opt_meta = ""
+    print('ssss', settings[5], len(settings))
+    if len(settings) >= 6: 
+      opt_meta = settings[5]
+      
+
+    
+    cfg_range = numeric_range(settings[0])
+    clamp_cfg = clamp(cfg, cfg_range[0], cfg_range[1])
+    steps_range = numeric_range(settings[1])
+    clamp_steps = clamp(steps, steps_range[0], steps_range[1])
+    clamp_scheduler = clamp_in_list(scheduler, settings[2].split(","))
+    clamp_sampler = clamp_in_list(sampler, settings[3].split(","))
+
+
+    cfg_output = cfg_override if override else clamp_cfg
+    steps_output = steps_override if override else clamp_steps
+    scheduler_output = scheduler_override if override else clamp_scheduler
+    sampler_output = sampler_override if override else clamp_sampler
+
+    used_setup_str = f"cfg: {cfg_output} | steps: {steps_output} | scheduler: {scheduler_output} | sampler: {sampler_output}"
+
+    versionname = {
+      "0": "sdxl",
+      "1": "sd15",
+      "2": "flux"
+      }.get(version, "sdxl")
+    filename = f"%date_%seed_%counter_{versionname}"
+    
+    return (
+      checkpoint_name,
+      recommended_setup_str,
+      used_setup_str,
+      int(version),
+      int(-abs(clip)),
+      int(vae_variant),
+      opt_meta,
+      filename,
+      float(cfg_output),
+      int(steps_output),
+      sampler_output,
+      scheduler_output
+    )
