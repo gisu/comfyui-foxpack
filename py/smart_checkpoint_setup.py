@@ -1,6 +1,7 @@
 import comfy.samplers
 import folder_paths
 import os
+import re
 
 def clamp(value, min_value, max_value):
   return max(min_value, min(value, max_value))
@@ -382,11 +383,19 @@ class Complete_Setup:
   CATEGORY = "Foxpack/Smart Sampler Setup"
 
   def main(self, checkpoint_setups, checkpoint_name, cfg, steps, scheduler, sampler, override, cfg_override, steps_override, scheduler_override, sampler_override, default_setup, default_meta):
-    cleanup_name = "!" + os.path.splitext(os.path.basename(checkpoint_name))[0]
+    cleanup_name = os.path.splitext(os.path.basename(checkpoint_name))[0]
+    print('ddd',cleanup_name)
+    settings = None
+    if (cleanup_name):
+      pattern = rf'!{cleanup_name}="([^"]+)"'
+      print('pattern',pattern)
+      match = re.search(pattern, checkpoint_setups)
+      print('match',match)
 
-    settings = extract_setup(checkpoint_setups, cleanup_name, default_setup)
-
-    print('settings', settings)
+      if match:
+        settings = match.group(1).split("/")
+      else:
+        settings = default_setup.split("/")
 
     recommended_setup_str = f"cfg: {settings[0]} | steps: {settings[1]} | scheduler: {settings[2]} | sampler: {settings[3]}"
 
@@ -420,7 +429,7 @@ class Complete_Setup:
     scheduler_output = scheduler_override if override else clamp_scheduler
     sampler_output = sampler_override if override else clamp_sampler
 
-    used_setup_str = f"cfg: {cfg_output} | steps: {steps_output} | scheduler: {scheduler_output} | sampler: {sampler_output}"
+    used_setup_str = f"cfg: {cfg_output} | steps: {int(steps_output)} | scheduler: {scheduler_output} | sampler: {sampler_output}"
 
     versionname = {
       "0": "sdxl",
