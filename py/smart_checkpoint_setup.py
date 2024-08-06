@@ -386,6 +386,8 @@ class Complete_Setup:
 
     settings = extract_setup(checkpoint_setups, cleanup_name, default_setup)
 
+    print('settings', settings)
+
     recommended_setup_str = f"cfg: {settings[0]} | steps: {settings[1]} | scheduler: {settings[2]} | sampler: {settings[3]}"
 
     version = 0
@@ -393,20 +395,18 @@ class Complete_Setup:
     vae_variant = 0
 
     meta = default_meta
+    opt_meta = ""
+
     if len(settings) >= 5:
       meta = settings[4]
+      if len(settings) >= 6: 
+        opt_meta = settings[5]
     
     meta = meta.split(",")
     version = meta[0]
     clip = int(meta[1])
     vae_variant = meta[2]
-
-    opt_meta = ""
-    print('ssss', settings[5], len(settings))
-    if len(settings) >= 6: 
-      opt_meta = settings[5]
-      
-
+          
     
     cfg_range = numeric_range(settings[0])
     clamp_cfg = clamp(cfg, cfg_range[0], cfg_range[1])
@@ -414,7 +414,6 @@ class Complete_Setup:
     clamp_steps = clamp(steps, steps_range[0], steps_range[1])
     clamp_scheduler = clamp_in_list(scheduler, settings[2].split(","))
     clamp_sampler = clamp_in_list(sampler, settings[3].split(","))
-
 
     cfg_output = cfg_override if override else clamp_cfg
     steps_output = steps_override if override else clamp_steps
