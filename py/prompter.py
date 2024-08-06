@@ -128,28 +128,11 @@ class Big_Prompter:
 
     character_details = ""
     if (select_character):
-      cleanup_name = "!" + select_character
-      index = char_collection.find(cleanup_name)
-    
-      return_string = ""
-      if (index == 1):
-        substring = char_collection[index + len(cleanup_name):]
-  
-        if substring.startswith('='):
-          substring = substring[1:]
-          
-          if substring.startswith('"'):
-            end_quote = substring.find('"', 1)
-            if end_quote != -1:
-              return_string = substring[1:end_quote]
-          else:
-            space_index = substring.find(" ")
-            if space_index != -1:
-              return_string = substring[:space_index]
-            else:
-              return_string = substring
-        
-      character_details = f"{return_string},BREAK"
+      pattern = rf'!{select_character}="([^"]+)"'
+      match = re.search(pattern, char_collection)
+
+      if match:
+        character_details = f"{match.group(1)},BREAK"
 
     set_technical_wildcard = technical_wildcard if use_technical_wildcard else ""
     set_artist_wildcard = artist_wildcard if use_artist_wildcard else ""
@@ -163,7 +146,6 @@ class Big_Prompter:
 
     pos_prompt = re.sub(r',+', ',', pos_prompt).strip(",")
     neg_prompt = re.sub(r',+', ',', neg_prompt).strip(",")
-
 
     return (
       pos_prompt,
