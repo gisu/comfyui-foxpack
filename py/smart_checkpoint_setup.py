@@ -232,21 +232,7 @@ class BaseSamplerSetup:
   FUNCTION = "main"
 
   def main(self, setup, cfg, steps, scheduler, sampler): 
-    # def clamp(value, min_value, max_value):
-    #     return max(min_value, min(value, max_value))
 
-    # def numeric_range(value):
-    #     if "-" in value:
-    #         parts = value.split("-")
-    #         return (float(parts[0]), float(parts[1]))
-    #     return (float(value), float(value))
-
-    # def clamp_in_list(value, lst):
-    #     if value in list(lst):
-    #         return value
-    #     return lst[0]
-      
-    """main"""
     cfg_range = numeric_range(setup[0])
     clamp_cfg = clamp(cfg, cfg_range[0], cfg_range[1])
 
@@ -389,8 +375,8 @@ class Complete_Setup:
       }
     }
 
-  RETURN_TYPES = (folder_paths.get_filename_list("checkpoints"),"STRING", "STRING", "INT", "INT", "INT", "STRING", "STRING", "FLOAT","INT", comfy.samplers.KSampler.SAMPLERS, comfy.samplers.KSampler.SCHEDULERS)
-  RETURN_NAMES = ("ckpt_name", "recommended_setup_str", "used_setup_str", "version", "clip", "vae_variant", "opt_meta", "filename", "cfg", "steps", "sampler", "scheduler")
+  RETURN_TYPES = (folder_paths.get_filename_list("checkpoints"),"STRING", "STRING", "INT", "INT", "INT", "STRING", "STRING", "FLOAT","INT", comfy.samplers.KSampler.SAMPLERS, comfy.samplers.KSampler.SCHEDULERS, "LIST")
+  RETURN_NAMES = ("ckpt_name", "recommended_setup_str", "used_setup_str", "version", "clip", "vae_variant", "opt_meta", "filename", "cfg", "steps", "sampler", "scheduler", "meta_list")
 
   FUNCTION = "main"
   CATEGORY = "Foxpack/Smart Sampler Setup"
@@ -443,6 +429,15 @@ class Complete_Setup:
       "2": "flux"
       }.get(version, "sdxl")
     filename = f"%date_%seed_%counter_{versionname}"
+
+    meta_list = [
+      checkpoint_name,
+      filename,
+      cfg_output,
+      steps_output,
+      sampler_output,
+      scheduler_output
+    ]
     
     return (
       checkpoint_name,
@@ -456,5 +451,6 @@ class Complete_Setup:
       float(cfg_output),
       int(steps_output),
       sampler_output,
-      scheduler_output
+      scheduler_output,
+      meta_list
     )
