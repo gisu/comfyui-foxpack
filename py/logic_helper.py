@@ -588,6 +588,9 @@ class Convert_Into:
         "seperator": ("STRING", {
           "default": ",",
         }),
+        "reverse": ("BOOLEAN", {
+          "default": False,
+        }),
         "output_type": (["string", "int", "float", "boolean", "list"],
         {
           "default": "string"
@@ -602,7 +605,7 @@ class Convert_Into:
 
   CATEGORY = "Foxpack/Logic"
 
-  def main(self, value, output_type, seperator):
+  def main(self, value, output_type, seperator, reverse):
     output = None
 
     if output_type == "string":
@@ -615,13 +618,19 @@ class Convert_Into:
     elif output_type == "float":
       output = float(value)
     elif output_type == "boolean":
-      if isinstance(value, (int, float)):
-        value = int(value) if value.is_float() else value
+      if type(value) == int:
+        output = bool(False) if value == 0 else bool(True)
+      if type(value) == float:
+        value = int(value)
         output = bool(False) if value == 0 else bool(True)
       elif type(value) == str:
         output = bool(False) if len(value) > 0 else bool(True)
+      elif type(value) == bool:
+        output = not value if reverse else value
       else:
         output = bool(value)
+
+      output = not output if reverse else output
     elif output_type == "list":
       if (type(value) == str):
         value = value.split(seperator)
