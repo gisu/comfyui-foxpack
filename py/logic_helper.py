@@ -130,7 +130,7 @@ class Negate_Boolean:
   CATEGORY = "Foxpack/Logic"
 
   def main(self, value):
-    return not value
+    return (not value,)
 
 class Select_String_By_Index:
   def __init__(self):
@@ -392,8 +392,8 @@ class Change_Entry_From_List:
   CATEGORY = "Foxpack/Logic"
 
   def main(self, index, options, change_value):
-    # change an entry in a list
     options[index] = change_value
+    
     return (
       options,
     )
@@ -615,7 +615,13 @@ class Convert_Into:
     elif output_type == "float":
       output = float(value)
     elif output_type == "boolean":
-      output = bool(value)
+      if isinstance(value, (int, float)):
+        value = int(value) if value.is_float() else value
+        output = bool(False) if value == 0 else bool(True)
+      elif type(value) == str:
+        output = bool(False) if len(value) > 0 else bool(True)
+      else:
+        output = bool(value)
     elif output_type == "list":
       if (type(value) == str):
         value = value.split(seperator)
