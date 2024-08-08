@@ -391,10 +391,10 @@ class Complete_Setup:
   def main(self, checkpoint_setups, checkpoint_name, cfg, steps, scheduler, sampler, override, cfg_override, steps_override, scheduler_override, sampler_override, default_setup, default_meta, optional_setups):
     cleanup_name = os.path.splitext(os.path.basename(checkpoint_name))[0]
     settings = default_setup.split("/")
-    selected_optional_setup = ""
+    selected_optional_setup = "{}"
     
     if (cleanup_name):
-      pattern = rf'!{cleanup_name}="([^"]+)"'
+      pattern = rf'!{cleanup_name}:(.+)'
       pattern_optional = rf'!{cleanup_name}:(.+)'
   
       match = re.search(pattern, checkpoint_setups)
@@ -406,26 +406,24 @@ class Complete_Setup:
       if match_optional:
         selected_optional_setup = match_optional.group(1)
 
-    recommended_setup_str = f"cfg: {settings[0]} | steps: {settings[1]} | scheduler: {settings[2]} | sampler: {settings[3]}"
-
+    # version 0 = sdxl, 1 = sd15, 2 = flux
     version = 0
     clip = -2
     vae_variant = 0
 
-    meta = default_meta
-    opt_meta = ""
+    version = settings[4]
+    clip = int(settings[5])
+    vae_variant = settings[6]
 
-    if len(settings) >= 5:
-      meta = settings[4]
-      if len(settings) >= 6:
-        opt_meta = settings[5]
-
-    meta = meta.split(",")
-    version = meta[0]
-    clip = int(meta[1])
-    vae_variant = meta[2]
-
-
+    vae_string = "baked" if vae_variant == 0 else "external"
+    versionname = {
+      "0": "sdxl",
+      "1": "sd15",
+      "2": "flux"
+      }.get(version, "sdxl")
+   
+    recommended_setup_str = f"Checkpoint: {cleanup_name} | Basemodel: {versionname}\ncfg: {settings[0]} | steps: {settings[1]} | scheduler: {settings[2]} | sampler: {settings[3]}\nVEA: {vae_string} | Clip: {clip} | Version: {version}"
+    
     cfg_range = numeric_range(settings[0])
     clamp_cfg = clamp(cfg, cfg_range[0], cfg_range[1])
     steps_range = numeric_range(settings[1])
@@ -438,13 +436,9 @@ class Complete_Setup:
     scheduler_output = scheduler_override if override else clamp_scheduler
     sampler_output = sampler_override if override else clamp_sampler
 
-    used_setup_str = f"cfg: {cfg_output} | steps: {int(steps_output)} | scheduler: {scheduler_output} | sampler: {sampler_output}"
+    used_setup_str = f"Checkpoint: {cleanup_name} | Baseodel: {versionname}\ncfg: {cfg_output} | steps: {int(steps_output)} | scheduler: {scheduler_output} | sampler: {sampler_output}"
 
-    versionname = {
-      "0": "sdxl",
-      "1": "sd15",
-      "2": "flux"
-      }.get(version, "sdxl")
+    
     filename = f"%date_%seed_%counter_{versionname}"
 
     meta_list = [
