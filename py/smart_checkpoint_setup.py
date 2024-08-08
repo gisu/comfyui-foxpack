@@ -20,15 +20,15 @@ def clamp_in_list(value, lst):
 def extract_setup(checkpoint_setups, cleanup_name, default_setup, delmiter = "/"):
   index = checkpoint_setups.find(cleanup_name)
   return_string = ""
-  
+
   if index == -1:
     return default_setup
-  
+
   substring = checkpoint_setups[index + len(cleanup_name):]
-  
+
   if substring.startswith('='):
     substring = substring[1:]
-    
+
     if substring.startswith('"'):
       end_quote = substring.find('"', 1)
       if end_quote != -1:
@@ -43,12 +43,12 @@ def extract_setup(checkpoint_setups, cleanup_name, default_setup, delmiter = "/"
         return_string = substring
   else:
     return_string = default_setup
-  
+
   settings = return_string.split(delmiter)
-  
+
   return settings
 
-class CheckpointSelector: 
+class CheckpointSelector:
   @classmethod
   def INPUT_TYPES(cls):
     return {
@@ -60,21 +60,21 @@ class CheckpointSelector:
   RETURN_TYPES = (folder_paths.get_filename_list("checkpoints"), "STRING")
   RETURN_NAMES = ("ckpt_name", "name_str")
   CATEGORY = "Foxpack/Smart Sampler Setup"
-  FUNCTION = "main" 
+  FUNCTION = "main"
 
   def main(self, checkpoint_name):
     cleanup_name = os.path.splitext(os.path.basename(checkpoint_name))[0]
-    
+
     return (
-      checkpoint_name, 
+      checkpoint_name,
       str(cleanup_name)
     )
-    
+
 
 class SetupSelector:
   def __init__(self):
     pass
-  
+
   @classmethod
   def INPUT_TYPES(cls):
     return {
@@ -108,18 +108,18 @@ class SetupSelector:
 
   RETURN_TYPES = ("STRING", "STRING", "STRING", "STRING","STRING", "LIST", "STRING")
   RETURN_NAMES = ("set_cfg", "set_steps", "set_scheduler", "set_sampler", "setup_text", "setup", "meta")
-  
+
   FUNCTION = "main"
   # OUTPUT_NODE = True
-  
+
   CATEGORY = "Foxpack/Smart Sampler Setup"
-  
+
   def main(self, checkpoint_name, checkpoint_setups, setup_prefix, delmiter, default_setup, default_meta):
     return_string = ""
     prefixed_name = str(setup_prefix) + str(checkpoint_name)
-    
+
     index = checkpoint_setups.find(prefixed_name)
-    
+
     if index != -1:
       if checkpoint_setups[index + len(prefixed_name)] == '=':
         if checkpoint_setups[index + len(prefixed_name) + 1] == '"':
@@ -128,7 +128,7 @@ class SetupSelector:
           if end_quote != -1:
             return_string = checkpoint_setups[start_quote:end_quote]
             print(return_string)
-        else:        
+        else:
           space_index = checkpoint_setups.find(" ", index + len(prefixed_name))
           if space_index != -1:
             return_string = checkpoint_setups[index + len(prefixed_name):space_index]
@@ -139,7 +139,7 @@ class SetupSelector:
 
     if return_string == "":
       return_string = default_setup
-    
+
     if return_string.startswith("="):
       return_string = return_string[1:]
 
@@ -153,14 +153,14 @@ class SetupSelector:
 
     setup = list(settings)
     setup_text = f"cfg: {settings[0]} | steps: {settings[1]} | scheduler: {settings[2]} | sampler: {settings[3]}"
-    
+
     return (
-      str(settings[0]), 
-      str(settings[1]), 
-      str(settings[2]), 
-      str(settings[3]), 
-      str(setup_text), 
-      list(setup), 
+      str(settings[0]),
+      str(settings[1]),
+      str(settings[2]),
+      str(settings[3]),
+      str(setup_text),
+      list(setup),
       str(meta)
     )
 class CheckpointMetaExtractor:
@@ -190,7 +190,7 @@ class CheckpointMetaExtractor:
     version = meta[0]
     clip = int(meta[1])
     vae = meta[2]
-    
+
     return (
       int(version),
       int(-abs(clip)),
@@ -200,9 +200,9 @@ class CheckpointMetaExtractor:
 class BaseSamplerSetup:
   def __init__(self):
     pass
-    
+
   @classmethod
-  
+
   def INPUT_TYPES(s):
     return {
       "required": {
@@ -232,7 +232,7 @@ class BaseSamplerSetup:
   RETURN_NAMES = ("cfg", "steps", "scheduler", "sampler", "setup_text", "selected_setup")
   FUNCTION = "main"
 
-  def main(self, setup, cfg, steps, scheduler, sampler): 
+  def main(self, setup, cfg, steps, scheduler, sampler):
 
     cfg_range = numeric_range(setup[0])
     clamp_cfg = clamp(cfg, cfg_range[0], cfg_range[1])
@@ -245,7 +245,7 @@ class BaseSamplerSetup:
 
     selected_setup = [clamp_cfg, clamp_steps, clamp_scheduler, clamp_sampler]
     setup_text = f"cfg: {clamp_cfg} | steps: {clamp_steps} | scheduler: {clamp_scheduler} | sampler: {clamp_sampler}"
-    
+
     return (
       float(clamp_cfg),
       int(clamp_steps),
@@ -256,12 +256,12 @@ class BaseSamplerSetup:
     )
 
   CATEGORY = "Foxpack/Smart Sampler Setup"
-    
-  
+
+
 class OverrideSamplerSetup:
     def __init__(self):
         pass
-    
+
     @classmethod
     def INPUT_TYPES(s):
         return {
@@ -301,7 +301,7 @@ class OverrideSamplerSetup:
       sampler_output = sampler if override else setup[3]
 
       setup_text = f"cfg: {cfg_output} | steps: {steps_output} | scheduler: {scheduler_output} | sampler: {sampler_output}"
-      
+
       return (
         float(cfg_output),
         int(steps_output),
@@ -321,50 +321,50 @@ class Complete_Setup:
           "forceInput": True,
           "multiline": True
         }),
-        
+
         "checkpoint_name": (folder_paths.get_filename_list("checkpoints"),),
         "cfg": ("FLOAT", {
-          "default": 1.0,
+          "default": 5.0,
           "min": 0.0,
           "max": 16.0,
           "step": 0.1,
           "display": "number"
         }),
         "steps": ("INT", {
-          "default": 5,
+          "default": 20,
           "min": 1,
           "max": 100,
           "step": 1,
           "display": "number"
         }),
         "scheduler": (comfy.samplers.KSampler.SCHEDULERS, {
-          "default": "linear"
+          "default": "karras"
         }),
         "sampler": (comfy.samplers.KSampler.SAMPLERS, {
-          "default": "karras"
+          "default": "dpmpp_2m"
         }),
         "override": ("BOOLEAN", {"default": False}),
         "cfg_override": ("FLOAT", {
-          "default": 1.0,
+          "default": 5.0,
           "min": 0.0,
           "max": 16.0,
           "step": 0.1,
           "display": "number"
         }),
         "steps_override": ("INT", {
-          "default": 5,
+          "default": 20,
           "min": 1,
           "max": 100,
           "step": 1,
           "display": "number"
         }),
         "scheduler_override": (comfy.samplers.KSampler.SCHEDULERS, {
-          "default": "linear"
-        }),
-        "sampler_override": (comfy.samplers.KSampler.SAMPLERS, {
           "default": "karras"
         }),
-        "default_setup": ("STRING", { 
+        "sampler_override": (comfy.samplers.KSampler.SAMPLERS, {
+          "default": "dpmpp_2m"
+        }),
+        "default_setup": ("STRING", {
           "default": "5/20/karras/dpmpp_2m",
         }),
         "default_meta": ("STRING", {
@@ -373,29 +373,38 @@ class Complete_Setup:
         # "extra_meta": ("STRING", {
         #   "default": "{'version':'sdxl','clip':-2,'vae_variant':0, 'pony': True}",
         # })
+      },
+      "optional": {
+        "optional_setups": ("STRING", {
+          "default": "",
+          "multiline": True
+        })
       }
     }
 
-  RETURN_TYPES = (folder_paths.get_filename_list("checkpoints"),"STRING", "STRING", "INT", "INT", "INT", "STRING", "STRING", "FLOAT","INT", comfy.samplers.KSampler.SAMPLERS, comfy.samplers.KSampler.SCHEDULERS, "LIST")
-  RETURN_NAMES = ("ckpt_name", "recommended_setup_str", "used_setup_str", "version", "clip", "vae_variant", "opt_meta", "filename", "cfg", "steps", "sampler", "scheduler", "meta_list")
+  RETURN_TYPES = (folder_paths.get_filename_list("checkpoints"),"STRING", "STRING", "INT", "INT", "INT", "STRING", "STRING", "FLOAT","INT", comfy.samplers.KSampler.SAMPLERS, comfy.samplers.KSampler.SCHEDULERS, "LIST", "STRING")
+  RETURN_NAMES = ("ckpt_name", "recommended_setup_str", "used_setup_str", "version", "clip", "vae_variant", "opt_meta", "filename", "cfg", "steps", "sampler", "scheduler", "meta_list", "optional_setup")
 
   FUNCTION = "main"
   CATEGORY = "Foxpack/Smart Sampler Setup"
 
-  def main(self, checkpoint_setups, checkpoint_name, cfg, steps, scheduler, sampler, override, cfg_override, steps_override, scheduler_override, sampler_override, default_setup, default_meta):
+  def main(self, checkpoint_setups, checkpoint_name, cfg, steps, scheduler, sampler, override, cfg_override, steps_override, scheduler_override, sampler_override, default_setup, default_meta, optional_setups):
     cleanup_name = os.path.splitext(os.path.basename(checkpoint_name))[0]
-    print('ddd',cleanup_name)
-    settings = None
+    settings = default_setup.split("/")
+    selected_optional_setup = ""
+    
     if (cleanup_name):
       pattern = rf'!{cleanup_name}="([^"]+)"'
-      print('pattern',pattern)
+      pattern_optional = rf'!{cleanup_name}:(.+)'
+  
       match = re.search(pattern, checkpoint_setups)
-      print('match',match)
-
+      match_optional = re.search(pattern_optional, optional_setups)
+      
       if match:
         settings = match.group(1).split("/")
-      else:
-        settings = default_setup.split("/")
+
+      if match_optional:
+        selected_optional_setup = match_optional.group(1)
 
     recommended_setup_str = f"cfg: {settings[0]} | steps: {settings[1]} | scheduler: {settings[2]} | sampler: {settings[3]}"
 
@@ -408,15 +417,15 @@ class Complete_Setup:
 
     if len(settings) >= 5:
       meta = settings[4]
-      if len(settings) >= 6: 
+      if len(settings) >= 6:
         opt_meta = settings[5]
-    
+
     meta = meta.split(",")
     version = meta[0]
     clip = int(meta[1])
     vae_variant = meta[2]
-          
-    
+
+
     cfg_range = numeric_range(settings[0])
     clamp_cfg = clamp(cfg, cfg_range[0], cfg_range[1])
     steps_range = numeric_range(settings[1])
@@ -446,7 +455,9 @@ class Complete_Setup:
       sampler_output,
       scheduler_output
     ]
+
     
+
     return (
       checkpoint_name,
       recommended_setup_str,
@@ -460,5 +471,6 @@ class Complete_Setup:
       int(steps_output),
       sampler_output,
       scheduler_output,
-      meta_list
+      meta_list,
+      selected_optional_setup
     )

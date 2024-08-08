@@ -1,4 +1,5 @@
 import ast
+import re
 class AnyType(str):
     def __ne__(self, __value: object) -> bool:
         return False
@@ -757,7 +758,7 @@ class Pick_Value_From_Dict:
   def INPUT_TYPES(s):
     return {
       "required": {
-        "dict": ("STRING", {
+        "values": ("STRING", {
           "forceInput": True
         }),
         "key": ("STRING", {
@@ -780,8 +781,12 @@ class Pick_Value_From_Dict:
 
   CATEGORY = "Foxpack/Logic"
 
-  def main(self, dict, key, default_return, return_type):
-    dict_str = "{" + dict + "}"
+  def main(self, values, key, default_return, return_type):
+    if values and not re.search(r"\{.*\}", values):
+      dict_str = "{" + values + "}"
+    else:
+      dict_str = values
+   
     dictionary = ast.literal_eval(dict_str)
     
     value = dictionary.get(key)
