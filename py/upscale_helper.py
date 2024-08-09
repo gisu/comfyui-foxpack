@@ -95,16 +95,7 @@ class Refine_Setup:
   def INPUT_TYPES(s):
     return {
       "required": {
-        "used_cfg": ("FLOAT", {
-          "forceInput": True,
-        }),
-        "used_steps": ("INT", {
-          "forceInput": True,
-        }),
-        "used_scheduler": (any_type, {
-          "forceInput": True,
-        }),
-        "used_sampler": (any_type, {
+        "sampler_setup": ("STRING", {
           "forceInput": True,
         }),
         "disable_override": ("BOOLEAN", {
@@ -133,8 +124,8 @@ class Refine_Setup:
       },
       "optional": {
         "refine_setup": ("STRING", {
-          "default": ""
-        })
+          "default": "{}"
+        }),
       }
     }
 
@@ -144,21 +135,22 @@ class Refine_Setup:
   FUNCTION = "main"
   CATEGORY = "Foxpack/Upscale"
 
-  def main(self, used_scheduler, used_sampler, select_scheduler, select_sampler, select_cfg, select_steps, used_cfg, used_steps, disable_override, refine_setup):
-
+  def main(self,sampler_setup, select_scheduler, select_sampler, select_cfg, select_steps, disable_override, refine_setup):
+    used = sampler_setup.split(",")
+    
     if disable_override:
       return (
-        float(used_cfg),
-        int(used_steps),
-        used_sampler,
-        used_scheduler,
+        float(used[0]),
+        int(used[1]),
+        used[2],
+        used[3],
       )
-
-    return_sampler = used_sampler if select_sampler == "internal" else select_sampler
-    return_scheduler = used_scheduler if select_scheduler == "internal" else select_scheduler
-    return_cfg = used_cfg if select_cfg == 0.0 else select_cfg
-    return_steps = used_steps if select_steps == 0 else select_steps
-
+    
+    return_cfg = float(used[0]) if select_cfg == 0.0 else select_cfg
+    return_steps = int(used[1]) if select_steps == 0 else select_steps
+    return_sampler = used[2] if select_sampler == "internal" else select_sampler
+    return_scheduler = used[3] if select_scheduler == "internal" else select_scheduler
+    
     if refine_setup and not re.search(r"\{.*\}", refine_setup):
       refine_setup = "{" + refine_setup + "}"
 

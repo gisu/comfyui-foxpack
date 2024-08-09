@@ -321,7 +321,6 @@ class Complete_Setup:
           "forceInput": True,
           "multiline": True
         }),
-
         "checkpoint_name": (folder_paths.get_filename_list("checkpoints"),),
         "cfg": ("FLOAT", {
           "default": 5.0,
@@ -364,15 +363,6 @@ class Complete_Setup:
         "sampler_override": (comfy.samplers.KSampler.SAMPLERS, {
           "default": "dpmpp_2m"
         }),
-        "default_setup": ("STRING", {
-          "default": "5/20/karras/dpmpp_2m",
-        }),
-        "default_meta": ("STRING", {
-          "default": "0,-2,0",
-        }),
-        # "extra_meta": ("STRING", {
-        #   "default": "{'version':'sdxl','clip':-2,'vae_variant':0, 'pony': True}",
-        # })
       },
       "optional": {
         "optional_setups": ("STRING", {
@@ -382,16 +372,17 @@ class Complete_Setup:
       }
     }
 
-  RETURN_TYPES = (folder_paths.get_filename_list("checkpoints"),"STRING", "STRING", "INT", "INT", "INT", "STRING", "STRING", "FLOAT","INT", comfy.samplers.KSampler.SAMPLERS, comfy.samplers.KSampler.SCHEDULERS, "LIST", "STRING")
-  RETURN_NAMES = ("ckpt_name", "recommended_setup_str", "used_setup_str", "version", "clip", "vae_variant", "opt_meta", "filename", "cfg", "steps", "sampler", "scheduler", "meta_list", "optional_setup")
+  RETURN_TYPES = (folder_paths.get_filename_list("checkpoints"),"STRING", "STRING", "INT", "INT", "INT", "FLOAT","INT", comfy.samplers.KSampler.SAMPLERS, comfy.samplers.KSampler.SCHEDULERS, "LIST", "STRING", "STRING")
+  RETURN_NAMES = ("ckpt_name", "recommended_setup_str", "used_setup_str", "version", "clip", "vae_variant", "cfg", "steps", "sampler", "scheduler", "meta_list", "opt_setup_dict", "comb_sampler_settings")
 
   FUNCTION = "main"
   CATEGORY = "Foxpack/Smart Sampler Setup"
 
-  def main(self, checkpoint_setups, checkpoint_name, cfg, steps, scheduler, sampler, override, cfg_override, steps_override, scheduler_override, sampler_override, default_setup, default_meta, optional_setups):
+  def main(self, checkpoint_setups, checkpoint_name, cfg, steps, scheduler, sampler, override, cfg_override, steps_override, scheduler_override, sampler_override, optional_setups):
     cleanup_name = os.path.splitext(os.path.basename(checkpoint_name))[0]
-    settings = default_setup.split("/")
+    settings = ""
     selected_optional_setup = "{}"
+    used_default_setup = False
     
     if (cleanup_name):
       pattern = rf'!{cleanup_name}:(.+)'
@@ -402,6 +393,14 @@ class Complete_Setup:
       
       if match:
         settings = match.group(1).split("/")
+      else:
+        pattern = rf'!DEFAULT:(.+)'
+        match = re.search(pattern, checkpoint_setups)
+        used_default_setup = True
+        if match:
+          settings = match.group(1).split("/")
+        else:
+          settings = ["5", "20", "karras", "dpmpp_2m", "0", "-2", "0"]
 
       if match_optional:
         selected_optional_setup = match_optional.group(1)
@@ -421,8 +420,9 @@ class Complete_Setup:
       "1": "sd15",
       "2": "flux"
       }.get(version, "sdxl")
-   
-    recommended_setup_str = f"Checkpoint: {cleanup_name} | Basemodel: {versionname}\ncfg: {settings[0]} | steps: {settings[1]} | scheduler: {settings[2]} | sampler: {settings[3]}\nVEA: {vae_string} | Clip: {clip} | Version: {version}"
+
+    used_default_setup_str = " (used default setup)" if used_default_setup else ""
+    recommended_setup_str = f"Checkpoint ({versionname}): {cleanup_name}{used_default_setup_str}\ncfg: {settings[0]}, steps: {settings[1]}, scheduler: {settings[2]}, sampler: {settings[3]}\nvae: {vae_string}, clip: {clip}, version: {version}"
     
     cfg_range = numeric_range(settings[0])
     clamp_cfg = clamp(cfg, cfg_range[0], cfg_range[1])
@@ -436,21 +436,23 @@ class Complete_Setup:
     scheduler_output = scheduler_override if override else clamp_scheduler
     sampler_output = sampler_override if override else clamp_sampler
 
-    used_setup_str = f"Checkpoint: {cleanup_name} | Baseodel: {versionname}\ncfg: {cfg_output} | steps: {int(steps_output)} | scheduler: {scheduler_output} | sampler: {sampler_output}"
+    is_override = " (overridden settings)" if override else ""
+
+    used_setup_str = f"Checkpoint ({versionname}): {cleanup_name}{is_override}\ncfg: {cfg_output}, steps: {int(steps_output)}, scheduler: {scheduler_output}, sampler: {sampler_output}"
 
     
     filename = f"%date_%seed_%counter_{versionname}"
 
+    sampler_settings = f"{cfg_output},{int(steps_output)},{sampler_output},{scheduler_output}"
+
     meta_list = [
       checkpoint_name,
       filename,
-      cfg_output,
-      steps_output,
+      float(cfg_output),
+      int(steps_output),
       sampler_output,
       scheduler_output
     ]
-
-    
 
     return (
       checkpoint_name,
@@ -459,12 +461,11 @@ class Complete_Setup:
       int(version),
       int(-abs(clip)),
       int(vae_variant),
-      opt_meta,
-      filename,
       float(cfg_output),
       int(steps_output),
       sampler_output,
       scheduler_output,
       meta_list,
-      selected_optional_setup
+      selected_optional_setup,
+      sampler_settings
     )
