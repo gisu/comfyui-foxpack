@@ -15,11 +15,17 @@ class Universal_VAE_Loader:
           "default": 0,
           "forceInput": True,
           "min": 0,
-          "max": 3
+          "max": 5
         }),
         "vae_sdxl": (folder_paths.get_filename_list("vae"),),
         "vae_sd15": (folder_paths.get_filename_list("vae"),),
-      }
+        "vae_sd3": (folder_paths.get_filename_list("vae"),),
+        "vae_flux": (folder_paths.get_filename_list("vae"),),
+        "vae_type_select": (["base","baked", "sdxl", "sd15", "sd3", "flux"],
+          {
+            "default": "base",
+        })
+      },
     }
 
   # version 1: baked, 2: sdxl, 3: sd15
@@ -31,7 +37,22 @@ class Universal_VAE_Loader:
 
   CATEGORY = "Foxpack/Loader"
 
-  def main(self, checkpoint_vae, vae_type, vae_sdxl, vae_sd15):
+  def main(self, checkpoint_vae, vae_type, vae_sdxl, vae_sd15, vae_sd3, vae_flux, vae_type_select):
+    if (vae_type_select != "base"):
+      if (vae_type_select == "baked"):
+        return (
+          checkpoint_vae,
+        )
+        
+      vae_path = folder_paths.get_full_path("vae", vae_name)
+      sd = comfy.utils.load_torch_file(vae_path)
+      vae = comfy.sd.VAE(sd=sd)
+
+      return (
+        vae,
+      )
+
+      
     if (vae_type == 0):
       return (
         checkpoint_vae,
@@ -39,7 +60,9 @@ class Universal_VAE_Loader:
       
     vae_name = {
       1: vae_sdxl,
-      2: vae_sd15
+      2: vae_sd15,
+      3: vae_sd3,
+      4: vae_flux,
     }.get(vae_type, checkpoint_vae)
 
     vae_path = folder_paths.get_full_path("vae", vae_name)
