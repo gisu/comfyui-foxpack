@@ -798,6 +798,7 @@ class Pick_Value_From_Dict:
       elif return_type == "float":
         return (float(default_return),)
       elif return_type == "boolean":
+        default_return = default_return.lower() == "true"
         return (bool(default_return),)
       elif return_type == "list":
         return ([default_return],)
