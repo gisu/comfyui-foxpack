@@ -29,7 +29,6 @@ class Universal_VAE_Loader:
     }
 
   # version 1: baked, 2: sdxl, 3: sd15
-
   RETURN_TYPES = ("VAE",)
   RETURN_NAMES = ("vae",)
 
@@ -38,32 +37,27 @@ class Universal_VAE_Loader:
   CATEGORY = "Foxpack/Loader"
 
   def main(self, checkpoint_vae, vae_type, vae_sdxl, vae_sd15, vae_sd3, vae_flux, vae_type_select):
-    if (vae_type_select != "base"):
-      if (vae_type_select == "baked"):
-        return (
-          checkpoint_vae,
-        )
-        
-      vae_path = folder_paths.get_full_path("vae", vae_name)
-      sd = comfy.utils.load_torch_file(vae_path)
-      vae = comfy.sd.VAE(sd=sd)
-
-      return (
-        vae,
-      )
-
-      
-    if (vae_type == 0):
-      return (
-        checkpoint_vae,
-      )
-      
     vae_name = {
       1: vae_sdxl,
       2: vae_sd15,
       3: vae_sd3,
       4: vae_flux,
     }.get(vae_type, checkpoint_vae)
+
+    if (vae_type_select != "base"):
+      if (vae_type_select == "baked"):
+        return (
+          checkpoint_vae,
+        )
+
+      vae_path = folder_paths.get_full_path("vae", vae_name)
+      sd = comfy.utils.load_torch_file(vae_path)
+      vae = comfy.sd.VAE(sd=sd)
+
+      return ( vae, )
+
+    if (vae_type == 0):
+      return ( checkpoint_vae, )
 
     vae_path = folder_paths.get_full_path("vae", vae_name)
     sd = comfy.utils.load_torch_file(vae_path)

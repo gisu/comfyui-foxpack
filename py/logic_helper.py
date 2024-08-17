@@ -1,24 +1,30 @@
 import ast
 import re
+
+
 class AnyType(str):
-    def __ne__(self, __value: object) -> bool:
-        return False
+  def __ne__(self, __value: object) -> bool:
+    return False
+
 
 any_type = AnyType("*")
+
 
 class DynamicInputType(dict):
   def __init__(self, type):
     self.type = type
 
   def __getitem__(self, key):
-    return (self.type, )
+    return (self.type,)
 
   def __contains__(self, key):
     return True
 
+
 class TautologyStr(str):
   def __ne__(self, other):
     return False
+
 
 class AlwaysEqualProxy(str):
   def __eq__(self, _):
@@ -27,45 +33,50 @@ class AlwaysEqualProxy(str):
   def __ne__(self, _):
     return False
 
+
 class ByPassTypeTuple(tuple):
   def __getitem__(self, index):
-    if index>0:
-      index=0
+    if index > 0:
+      index = 0
     item = super().__getitem__(index)
     if isinstance(item, str):
       return TautologyStr(item)
     return item
 
+
 def is_context_empty(ctx):
   return not ctx or all(v is None for v in ctx.values())
 
+
 def is_none(value):
   if value is not None:
-    if isinstance(value, dict) and 'model' in value and 'clip' in value:
+    if isinstance(value, dict) and "model" in value and "clip" in value:
       return is_context_empty(value)
   return value is None
 
+
 def variable_output_arr(separator, options, output_type, max_length: int = 2):
-    if (type(options) == str):
-      arr = [x.strip() for x in options.split(separator)]
-    else:
-      arr = options
-    
-    type_conversions = {
-        "int": int,
-        "float": float,
-        "boolean": bool,
-        "list": list,
-    }
+  if type(options) == str:
+    arr = [x.strip() for x in options.split(separator)]
+  else:
+    arr = options
 
-    if output_type in type_conversions:
-        arr = [type_conversions[output_type](x) for x in arr]
+  type_conversions = {
+    "int": int,
+    "float": float,
+    "boolean": bool,
+    "list": list,
+  }
 
-    arr.extend([""] * (max_length - len(arr)))
+  if output_type in type_conversions:
+    arr = [type_conversions[output_type](x) for x in arr]
 
-    output = tuple(arr[:max_length])
+  arr.extend([""] * (max_length - len(arr)))
 
-    return output
+  output = tuple(arr[:max_length])
+
+  return output
+
 
 class Remap_Values:
   def __init__(self):
@@ -75,15 +86,21 @@ class Remap_Values:
   def INPUT_TYPES(s):
     return {
       "required": {
-        "search_string": ("STRING", {
-          "forceInput": True,
-          "default": "",
-          "multiline": False,
-        }),
-        "map": ("STRING", {
-          "default": "",
-          "multiline": False,
-        }),
+        "search_string": (
+          "STRING",
+          {
+            "forceInput": True,
+            "default": "",
+            "multiline": False,
+          },
+        ),
+        "map": (
+          "STRING",
+          {
+            "default": "",
+            "multiline": False,
+          },
+        ),
       }
     }
 
@@ -103,11 +120,9 @@ class Remap_Values:
     print("entry:", entry)
 
     show_help = "show me some help"
-    
-    return (
-      str(entry),
-      show_help
-    )
+
+    return (str(entry), show_help)
+
 
 class Negate_Boolean:
   def __init__(self):
@@ -117,9 +132,7 @@ class Negate_Boolean:
   def INPUT_TYPES(s):
     return {
       "required": {
-        "value": ("BOOLEAN", {
-          "forceInput": True
-        }),
+        "value": ("BOOLEAN", {"forceInput": True}),
       }
     }
 
@@ -133,6 +146,7 @@ class Negate_Boolean:
   def main(self, value):
     return (not value,)
 
+
 class Select_String_By_Index:
   def __init__(self):
     pass
@@ -141,12 +155,13 @@ class Select_String_By_Index:
   def INPUT_TYPES(s):
     return {
       "required": {
-        "index": ("INT", {
-          "default": 0,
-        }),
-        "options": ("STRING", {
-          "forceInput": True
-        }),
+        "index": (
+          "INT",
+          {
+            "default": 0,
+          },
+        ),
+        "options": ("STRING", {"forceInput": True}),
       }
     }
 
@@ -156,16 +171,15 @@ class Select_String_By_Index:
   FUNCTION = "main"
 
   CATEGORY = "Foxpack/Logic"
-  
+
   def main(self, index, options):
     stringArray = options.split(",")
     length = len(stringArray)
     index = index if index < length else length - 1
     selected_option = stringArray[index]
-    
-    return (
-      str(selected_option),
-    )
+
+    return (str(selected_option),)
+
 
 class Select_By_Index:
   def __init__(self):
@@ -175,19 +189,23 @@ class Select_By_Index:
   def INPUT_TYPES(s):
     return {
       "required": {
-        "index": ("INT", {
-          "default": 0,
-        }),
-        "options": (any_type, {
-          "forceInput": True
-        }),
-        "seperator": ("STRING", {
-          "default": ",",
-        }),
-        "output_type": (["input","string", "int", "float", "boolean", "list"],
-        {
-          "default": "string"
-        }),
+        "index": (
+          "INT",
+          {
+            "default": 0,
+          },
+        ),
+        "options": (any_type, {"forceInput": True}),
+        "seperator": (
+          "STRING",
+          {
+            "default": ",",
+          },
+        ),
+        "output_type": (
+          ["input", "string", "int", "float", "boolean", "list"],
+          {"default": "string"},
+        ),
       }
     }
 
@@ -212,14 +230,13 @@ class Select_By_Index:
       "int": int,
       "float": float,
       "boolean": bool,
-      "list": lambda x: [x]
-    } 
+      "list": lambda x: [x],
+    }
 
     param = conversion_map.get(output_type, lambda x: x)(entry)
-      
-    return (
-      param,
-    )
+
+    return (param,)
+
 
 class Split_Entry_In_2Chunks:
   def __init__(self):
@@ -229,23 +246,24 @@ class Split_Entry_In_2Chunks:
   def INPUT_TYPES(s):
     return {
       "required": {
-        "seperator": ("STRING", {
-          "default": ",",
-        }),
-        "options": (any_type, {
-          "forceInput": True
-        })
+        "seperator": (
+          "STRING",
+          {
+            "default": ",",
+          },
+        ),
+        "options": (any_type, {"forceInput": True}),
       },
       "optional": {
-        "output_type": (["string", "int", "float", "boolean", "list"],
-        {
-          "default": "string"
-        }),
-      }
+        "output_type": (
+          ["string", "int", "float", "boolean", "list"],
+          {"default": "string"},
+        ),
+      },
     }
 
-  RETURN_TYPES = (any_type,any_type)
-  RETURN_NAMES = ("value1","value2")
+  RETURN_TYPES = (any_type, any_type)
+  RETURN_NAMES = ("value1", "value2")
   OUTPUT_NODE = True
 
   FUNCTION = "main"
@@ -253,9 +271,8 @@ class Split_Entry_In_2Chunks:
   CATEGORY = "Foxpack/Logic"
 
   def main(self, seperator, options, output_type):
-    return (
-      variable_output_arr(seperator, options, output_type, 2)
-    )
+    return variable_output_arr(seperator, options, output_type, 2)
+
 
 class Split_Entry_In_4Chunks:
   def __init__(self):
@@ -265,23 +282,24 @@ class Split_Entry_In_4Chunks:
   def INPUT_TYPES(s):
     return {
       "required": {
-        "seperator": ("STRING", {
-          "default": ",",
-        }),
-        "options": (any_type, {
-          "forceInput": True
-        })
+        "seperator": (
+          "STRING",
+          {
+            "default": ",",
+          },
+        ),
+        "options": (any_type, {"forceInput": True}),
       },
       "optional": {
-        "output_type": (["string", "int", "float", "boolean", "list"],
-        {
-          "default": "string"
-        }),
-      }
+        "output_type": (
+          ["string", "int", "float", "boolean", "list"],
+          {"default": "string"},
+        ),
+      },
     }
 
-  RETURN_TYPES = (any_type,any_type,any_type,any_type)
-  RETURN_NAMES = ("value1","value2","value3","value4")
+  RETURN_TYPES = (any_type, any_type, any_type, any_type)
+  RETURN_NAMES = ("value1", "value2", "value3", "value4")
   OUTPUT_NODE = True
 
   FUNCTION = "main"
@@ -289,9 +307,8 @@ class Split_Entry_In_4Chunks:
   CATEGORY = "Foxpack/Logic"
 
   def main(self, seperator, options, output_type):
-    return (
-      variable_output_arr(seperator, options, output_type, 4)
-    )
+    return variable_output_arr(seperator, options, output_type, 4)
+
 
 class Split_Entry_In_6Chunks:
   def __init__(self):
@@ -301,23 +318,24 @@ class Split_Entry_In_6Chunks:
   def INPUT_TYPES(s):
     return {
       "required": {
-        "seperator": ("STRING", {
-          "default": ",",
-        }),
-        "options": (any_type, {
-          "forceInput": True
-        })
+        "seperator": (
+          "STRING",
+          {
+            "default": ",",
+          },
+        ),
+        "options": (any_type, {"forceInput": True}),
       },
       "optional": {
-        "output_type": (["string", "int", "float", "boolean", "list"],
-        {
-          "default": "string"
-        }),
-      }
+        "output_type": (
+          ["string", "int", "float", "boolean", "list"],
+          {"default": "string"},
+        ),
+      },
     }
 
-  RETURN_TYPES = (any_type,any_type,any_type,any_type,any_type,any_type)
-  RETURN_NAMES = ("value1","value2","value3","value4","value5","value6")
+  RETURN_TYPES = (any_type, any_type, any_type, any_type, any_type, any_type)
+  RETURN_NAMES = ("value1", "value2", "value3", "value4", "value5", "value6")
   OUTPUT_NODE = True
 
   FUNCTION = "main"
@@ -325,9 +343,8 @@ class Split_Entry_In_6Chunks:
   CATEGORY = "Foxpack/Logic"
 
   def main(self, seperator, options, output_type):
-    return (
-      variable_output_arr(seperator, options, output_type, 6)
-    )
+    return variable_output_arr(seperator, options, output_type, 6)
+
 
 class Split_Entry_In_8Chunks:
   def __init__(self):
@@ -337,23 +354,42 @@ class Split_Entry_In_8Chunks:
   def INPUT_TYPES(s):
     return {
       "required": {
-        "seperator": ("STRING", {
-          "default": ",",
-        }),
-        "options": (any_type, {
-          "forceInput": True
-        })
+        "seperator": (
+          "STRING",
+          {
+            "default": ",",
+          },
+        ),
+        "options": (any_type, {"forceInput": True}),
       },
       "optional": {
-        "output_type": (["string", "int", "float", "boolean", "list"],
-        {
-          "default": "string"
-        }),
-      }
+        "output_type": (
+          ["string", "int", "float", "boolean", "list"],
+          {"default": "string"},
+        ),
+      },
     }
 
-  RETURN_TYPES = (any_type,any_type,any_type,any_type,any_type,any_type,any_type,any_type)
-  RETURN_NAMES = ("value1","value2","value3","value4","value5","value6","value7","value8")
+  RETURN_TYPES = (
+    any_type,
+    any_type,
+    any_type,
+    any_type,
+    any_type,
+    any_type,
+    any_type,
+    any_type,
+  )
+  RETURN_NAMES = (
+    "value1",
+    "value2",
+    "value3",
+    "value4",
+    "value5",
+    "value6",
+    "value7",
+    "value8",
+  )
   OUTPUT_NODE = True
 
   FUNCTION = "main"
@@ -361,9 +397,8 @@ class Split_Entry_In_8Chunks:
   CATEGORY = "Foxpack/Logic"
 
   def main(self, seperator, options, output_type):
-    return (
-      variable_output_arr(seperator, options, output_type, 8)
-    )
+    return variable_output_arr(seperator, options, output_type, 8)
+
 
 class Change_Entry_From_List:
   def __init__(self):
@@ -373,15 +408,14 @@ class Change_Entry_From_List:
   def INPUT_TYPES(s):
     return {
       "required": {
-        "index": ("INT", {
-          "default": 0,
-        }),
-        "options": ("LIST", {
-          "forceInput": True
-        }),
-        "change_value": (any_type, {
-          "forceInput": True
-        })
+        "index": (
+          "INT",
+          {
+            "default": 0,
+          },
+        ),
+        "options": ("LIST", {"forceInput": True}),
+        "change_value": (any_type, {"forceInput": True}),
       }
     }
 
@@ -394,10 +428,9 @@ class Change_Entry_From_List:
 
   def main(self, index, options, change_value):
     options[index] = change_value
-    
-    return (
-      options,
-    )
+
+    return (options,)
+
 
 class Change_Entries_In_A_List:
   def __init__(self):
@@ -407,15 +440,14 @@ class Change_Entries_In_A_List:
   def INPUT_TYPES(s):
     return {
       "required": {
-        "indexes": ("STRING", {
-          "default": "",
-        }),
-        "options": ("LIST", {
-          "forceInput": True
-        }),
-        "change_values": ("LIST", {
-          "forceInput": True
-        })
+        "indexes": (
+          "STRING",
+          {
+            "default": "",
+          },
+        ),
+        "options": ("LIST", {"forceInput": True}),
+        "change_values": ("LIST", {"forceInput": True}),
       }
     }
 
@@ -430,10 +462,9 @@ class Change_Entries_In_A_List:
     indexes = [int(x) for x in indexes.split(",")]
     for i, index in enumerate(indexes):
       options[index] = change_values[i]
-      
-    return (
-      options,
-    )
+
+    return (options,)
+
 
 class Pick_Values_From_List:
   def __init__(self):
@@ -443,12 +474,13 @@ class Pick_Values_From_List:
   def INPUT_TYPES(s):
     return {
       "required": {
-        "options": ("LIST", {
-          "forceInput": True
-        }),
-        "indexes": ("STRING", {
-          "default": "",
-        })
+        "options": ("LIST", {"forceInput": True}),
+        "indexes": (
+          "STRING",
+          {
+            "default": "",
+          },
+        ),
       }
     }
 
@@ -462,9 +494,8 @@ class Pick_Values_From_List:
   def main(self, indexes, options):
     indexes = [int(x) for x in indexes.split(",")]
     options = [options[x] for x in indexes]
-    return (
-      options,
-    )
+    return (options,)
+
 
 class Remove_Values_From_List:
   def __init__(self):
@@ -474,12 +505,13 @@ class Remove_Values_From_List:
   def INPUT_TYPES(s):
     return {
       "required": {
-        "options": ("LIST", {
-          "forceInput": True
-        }),
-        "indexes": ("STRING", {
-          "default": "",
-        })
+        "options": ("LIST", {"forceInput": True}),
+        "indexes": (
+          "STRING",
+          {
+            "default": "",
+          },
+        ),
       }
     }
 
@@ -493,11 +525,10 @@ class Remove_Values_From_List:
   def main(self, indexes, options):
     indexes = [int(x) for x in indexes.split(",")]
     options = [options[x] for x in range(len(options)) if x not in indexes]
-    
-    return (
-      options,
-    )
-  
+
+    return (options,)
+
+
 class Show_Type:
   def __init__(self):
     pass
@@ -506,9 +537,7 @@ class Show_Type:
   def INPUT_TYPES(s):
     return {
       "required": {
-        "value": (any_type, {
-          "forceInput": True
-        }),
+        "value": (any_type, {"forceInput": True}),
       }
     }
 
@@ -523,6 +552,7 @@ class Show_Type:
     print("Show_Type", value, type(value))
     return ()
 
+
 class Select_Line_By_Index:
   def __init__(self):
     pass
@@ -531,19 +561,28 @@ class Select_Line_By_Index:
   def INPUT_TYPES(s):
     return {
       "required": {
-        "options": ("STRING", {
-          "default": "",
-          "multiline": True,
-        }),
+        "options": (
+          "STRING",
+          {
+            "default": "",
+            "multiline": True,
+          },
+        ),
       },
       "optional": {
-        "index": ("INT", {
-          "default": 0,
-        }),
-        "search_word": ("STRING", {
-          "default": "",
-        }),
-      }
+        "index": (
+          "INT",
+          {
+            "default": 0,
+          },
+        ),
+        "search_word": (
+          "STRING",
+          {
+            "default": "",
+          },
+        ),
+      },
     }
 
   RETURN_TYPES = ("STRING",)
@@ -567,12 +606,14 @@ class Select_Line_By_Index:
           selected_option = line
           break
 
-      selected_option = selected_option.replace(search_word, "").replace("=", "").replace('"', "").strip()
-    
-    
-    return (
-      str(selected_option),
-    )
+      selected_option = (
+        selected_option.replace(search_word, "")
+        .replace("=", "")
+        .replace('"', "")
+        .strip()
+      )
+
+    return (str(selected_option),)
 
 
 class Convert_Into:
@@ -583,19 +624,23 @@ class Convert_Into:
   def INPUT_TYPES(s):
     return {
       "required": {
-        "value": (any_type, {
-          "forceInput": True
-        }),
-        "seperator": ("STRING", {
-          "default": ",",
-        }),
-        "reverse": ("BOOLEAN", {
-          "default": False,
-        }),
-        "output_type": (["string", "int", "float", "boolean", "list"],
-        {
-          "default": "string"
-        }),
+        "value": (any_type, {"forceInput": True}),
+        "seperator": (
+          "STRING",
+          {
+            "default": ",",
+          },
+        ),
+        "reverse": (
+          "BOOLEAN",
+          {
+            "default": False,
+          },
+        ),
+        "output_type": (
+          ["string", "int", "float", "boolean", "list"],
+          {"default": "string"},
+        ),
       }
     }
 
@@ -610,7 +655,7 @@ class Convert_Into:
     output = None
 
     if output_type == "string":
-      if (type(value) == list):
+      if isinstance(value, list):
         value = [str(x) for x in value]
         value = seperator.join(value)
       output = str(value)
@@ -619,30 +664,29 @@ class Convert_Into:
     elif output_type == "float":
       output = float(value)
     elif output_type == "boolean":
-      if type(value) == int:
-        output = bool(False) if value == 0 else bool(True)
-      if type(value) == float:
-        value = int(value)
-        output = bool(False) if value == 0 else bool(True)
-      elif type(value) == str:
-        output = bool(False) if len(value) > 0 else bool(True)
-      elif type(value) == bool:
+      if isinstance(value, (int, float)):
+        output = bool(value != 0)
+      elif isinstance(value, str):
+        output = bool(value)
+      elif isinstance(value, bool):
         output = not value if reverse else value
       else:
         output = bool(value)
 
       output = not output if reverse else output
     elif output_type == "list":
-      if (type(value) == str):
+      if isinstance(value, str):
         value = value.split(seperator)
-        value = [int(x) if x.isdigit() else float(x) if x.replace(".", "", 1).isdigit() else x for x in value]
+        value = [
+          int(x) if x.isdigit() else float(x) if x.replace(".", "", 1).isdigit() else x
+          for x in value
+        ]
         output = value
       else:
         output = [value]
 
-    return (
-      output,
-    )
+    return (output,)
+
 
 class Add_To_List:
   @classmethod
@@ -650,40 +694,18 @@ class Add_To_List:
     return {
       "required": {},
       "optional": {
-        "list": ("LIST", {
-          "forceInput": True
-        }),
-        "item1": (any_type, {
-          "forceInput": True
-        }),
-        "item2": (any_type, {
-          "forceInput": True
-        }),
-        "item3": (any_type, {
-          "forceInput": True
-        }),
-        "item4": (any_type, {
-          "forceInput": True
-        }),
-        "item5": (any_type, {
-          "forceInput": True
-        }),
-        "item6": (any_type, {
-          "forceInput": True
-        }),
-        "item7": (any_type, {
-          "forceInput": True
-        }),
-        "item8": (any_type, {
-          "forceInput": True
-        }),
-        "item9": (any_type, {
-          "forceInput": True
-        }),
-        "item10": (any_type, {
-          "forceInput": True
-        }),
-      }
+        "list": ("LIST", {"forceInput": True}),
+        "item1": (any_type, {"forceInput": True}),
+        "item2": (any_type, {"forceInput": True}),
+        "item3": (any_type, {"forceInput": True}),
+        "item4": (any_type, {"forceInput": True}),
+        "item5": (any_type, {"forceInput": True}),
+        "item6": (any_type, {"forceInput": True}),
+        "item7": (any_type, {"forceInput": True}),
+        "item8": (any_type, {"forceInput": True}),
+        "item9": (any_type, {"forceInput": True}),
+        "item10": (any_type, {"forceInput": True}),
+      },
     }
 
   RETURN_TYPES = ("LIST",)
@@ -696,14 +718,13 @@ class Add_To_List:
   def main(self, **kwargs):
     new_list = kwargs.get("list", [])
     new_list = [x for x in new_list if x is not None]
-    
+
     for key, value in kwargs.items():
-      if key.startswith('item') and value is not None:
+      if key.startswith("item") and value is not None:
         new_list.append(value)
-    
-    return (
-      new_list,
-    )
+
+    return (new_list,)
+
 
 class Override_Value_If_Unset:
   def __init__(self):
@@ -713,20 +734,24 @@ class Override_Value_If_Unset:
   def INPUT_TYPES(s):
     return {
       "required": {
-        "replace_value": ("STRING", {
-          "default": "0",
-          "forceInput": True,
-        }),
-        "replace_type": (["string", "int", "float", "boolean", "list"], {
-          "default": "string",
-          "forceInput": True,
-        }),
+        "replace_value": (
+          "STRING",
+          {
+            "default": "0",
+            "forceInput": True,
+          },
+        ),
+        "replace_type": (
+          ["string", "int", "float", "boolean", "list"],
+          {
+            "default": "string",
+            "forceInput": True,
+          },
+        ),
       },
       "optional": {
-        "value": (any_type, {
-          "forceInput": True
-        }),
-      }
+        "value": (any_type, {"forceInput": True}),
+      },
     }
 
   RETURN_TYPES = (any_type,)
@@ -737,7 +762,7 @@ class Override_Value_If_Unset:
   CATEGORY = "Foxpack/Logic"
 
   def main(self, replaced_value, replace_type, value):
-    if value: 
+    if value:
       return (value,)
     if replace_type == "string":
       return (replaced_value,)
@@ -750,6 +775,7 @@ class Override_Value_If_Unset:
     elif replace_type == "list":
       return ([replaced_value],)
 
+
 class Pick_Value_From_Dict:
   def __init__(self):
     pass
@@ -758,19 +784,23 @@ class Pick_Value_From_Dict:
   def INPUT_TYPES(s):
     return {
       "required": {
-        "values": ("STRING", {
-          "forceInput": True
-        }),
-        "key": ("STRING", {
-          "default": "",
-        }),
-        "default_return": ("STRING", {
-          "default": "",
-        }),
-        "return_type": (["string", "int", "float", "boolean", "list"],
-        {
-          "default": "string"
-        }),
+        "values": ("STRING", {"forceInput": True}),
+        "key": (
+          "STRING",
+          {
+            "default": "",
+          },
+        ),
+        "default_return": (
+          "STRING",
+          {
+            "default": "",
+          },
+        ),
+        "return_type": (
+          ["string", "int", "float", "boolean", "list"],
+          {"default": "string"},
+        ),
       }
     }
 
@@ -786,9 +816,9 @@ class Pick_Value_From_Dict:
       dict_str = "{" + values + "}"
     else:
       dict_str = values
-   
+
     dictionary = ast.literal_eval(dict_str)
-    
+
     value = dictionary.get(key)
     if value is None:
       if return_type == "string":
@@ -804,23 +834,28 @@ class Pick_Value_From_Dict:
         return ([default_return],)
     return (value,)
 
+
 class Optional_Value_Override:
   def __init__(self):
     pass
-  
+
   @classmethod
   def INPUT_TYPES(s):
     return {
       "required": {
-        "value": (any_type, {
-          "forceInput": True
-        }),
-        "override_value": ("STRING", {
-          "default": "",
-        }),
-        "override_active": ("BOOLEAN", {
-          "default": False,
-        }),
+        "value": (any_type, {"forceInput": True}),
+        "override_value": (
+          "STRING",
+          {
+            "default": "",
+          },
+        ),
+        "override_active": (
+          "BOOLEAN",
+          {
+            "default": False,
+          },
+        ),
       }
     }
 
@@ -829,22 +864,22 @@ class Optional_Value_Override:
   CATEGORY = "Foxpack/Logic"
   FUNCTION = "main"
 
-  def main(self, value, override_active, override_value = None):
+  def main(self, value, override_active, override_value=None):
     if override_value == None:
       return (value,)
-      
+
     return_value = value
-    if (type(value) == bool):
+    if isinstance(value, bool):
       override_value = override_value.lower() == "true" if override_active else value
-      
+
       return_value = bool(override_value) if override_active else value
-    elif (type(value) == int):
+    elif isinstance(value, int):
       return_value = int(override_value) if override_active else value
-    elif (type(value) == float):
+    elif isinstance(value, float):
       return_value = float(override_value) if override_active else value
-    elif (type(value) == str):
+    elif isinstance(value, str):
       return_value = override_value if override_active else value
-    elif (type(value) == list):
+    elif isinstance(value, list):
       return_value = [override_value] if override_active else value
 
     return (return_value,)
