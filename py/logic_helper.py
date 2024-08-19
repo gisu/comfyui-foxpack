@@ -834,22 +834,13 @@ class Pick_Value_From_Dict:
         return ([default_return],)
     return (value,)
 
-
 class Optional_Value_Override:
-  def __init__(self):
-    pass
-
   @classmethod
   def INPUT_TYPES(s):
     return {
       "required": {
         "value": (any_type, {"forceInput": True}),
-        "override_value": (
-          "STRING",
-          {
-            "default": "",
-          },
-        ),
+        "override_value": (any_type, {"forceInput": True}),
         "override_active": (
           "BOOLEAN",
           {
@@ -859,27 +850,21 @@ class Optional_Value_Override:
       }
     }
 
+
   RETURN_TYPES = (any_type,)
   RETURN_NAMES = ("value",)
   CATEGORY = "Foxpack/Logic"
   FUNCTION = "main"
 
   def main(self, value, override_active, override_value=None):
-    if override_value == None:
+    if override_value is None:
       return (value,)
 
-    return_value = value
-    if isinstance(value, bool):
-      override_value = override_value.lower() == "true" if override_active else value
+    if override_active:
+      return (override_value,)
+    else:
+      return (value,)
 
-      return_value = bool(override_value) if override_active else value
-    elif isinstance(value, int):
-      return_value = int(override_value) if override_active else value
-    elif isinstance(value, float):
-      return_value = float(override_value) if override_active else value
-    elif isinstance(value, str):
-      return_value = override_value if override_active else value
-    elif isinstance(value, list):
-      return_value = [override_value] if override_active else value
 
-    return (return_value,)
+
+
