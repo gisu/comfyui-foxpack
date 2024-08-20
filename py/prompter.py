@@ -40,7 +40,6 @@ class Big_Prompter:
             "default": "worst quality, low quality, text, censored, deformed, bad hand, blurry, (watermark),extra hands, extra dicks, extra fingers , deformed fingers",
           },
         ),
-        "character_list": ("STRING", {"default": "mara,clara"}),
         "full_wildcard": ("STRING", {"default": "__a-pure-wc__"}),
         "technical_wildcard": ("STRING", {"default": "__a-technical-wc__"}),
         "artist_wildcard": ("STRING", {"default": "__a-artist-wc__"}),
