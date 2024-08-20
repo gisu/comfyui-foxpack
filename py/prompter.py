@@ -6,9 +6,9 @@ class Big_Prompter:
     pass
 
   @classmethod
-  def INPUT_TYPES(s):
-    return {
-      "required": {
+  def INPUT_TYPES(cls):
+    input_types = {
+      "optional": {
         "is_pony": (
           "BOOLEAN",
           {
@@ -20,6 +20,10 @@ class Big_Prompter:
           "STRING",
           {"forceInput": True, "multiline": True, "default": ""},
         ),
+        "ext_llm_prompt": ("STRING", {"multiline": True, "default": "", "forceInput": True}),
+        "ext_gen_prompt": ("STRING", {"multiline": True, "default": "", "forceInput": True}),
+      },
+      "required": {
         "positive_prompt": ("STRING", {"multiline": True, "default": ""}),
         "negative_prompt": ("STRING", {"multiline": True, "default": ""}),
         "base_pos_prompt": (
@@ -36,11 +40,14 @@ class Big_Prompter:
             "default": "worst quality, low quality, text, censored, deformed, bad hand, blurry, (watermark),extra hands, extra dicks, extra fingers , deformed fingers",
           },
         ),
+        "character_list": ("STRING", {"default": "mara,clara"}),
         "full_wildcard": ("STRING", {"default": "__a-pure-wc__"}),
         "technical_wildcard": ("STRING", {"default": "__a-technical-wc__"}),
         "artist_wildcard": ("STRING", {"default": "__a-artist-wc__"}),
         "use_pos_base": ("BOOLEAN", {"default": True}),
         "use_neg_base": ("BOOLEAN", {"default": True}),
+        "use_ext_llm_prompt": ("BOOLEAN", {"default": False}),
+        "use_ext_gen_prompt": ("BOOLEAN", {"default": False}),
         "use_full_wildcard": ("BOOLEAN", {"default": False}),
         "use_technical_wildcard": ("BOOLEAN", {"default": False}),
         "use_artist_wildcard": ("BOOLEAN", {"default": False}),
@@ -49,9 +56,10 @@ class Big_Prompter:
           ["explicit", "questionable", "save", "none"],
           {"default": "save"},
         ),
-        "pony_quality": ([0, 1, 2, 3, 4], {"default": 4}),
       }
     }
+
+    return input_types
 
   RETURN_TYPES = ("STRING", "STRING")
   RETURN_NAMES = ("pos_prompt", "neg_prompt")
@@ -78,8 +86,7 @@ class Big_Prompter:
 
   def main(
     self,
-    is_pony,
-    char_collection,
+
     positive_prompt,
     negative_prompt,
     base_pos_prompt,
@@ -95,6 +102,12 @@ class Big_Prompter:
     use_artist_wildcard,
     use_pos_base,
     use_neg_base,
+    use_ext_llm_prompt,
+    use_ext_gen_prompt,
+    is_pony=False,
+    char_collection="",
+    ext_llm_prompt=None,
+    ext_gen_prompt=None,
   ):
     pony_pos_quality = ""
     pony_neg_quality = ""
@@ -114,6 +127,12 @@ class Big_Prompter:
       neg_prompt = re.sub(r",+", ",", neg_prompt).strip(",")
 
       return (pos_prompt, neg_prompt)
+
+    if ext_llm_prompt is not None and use_ext_llm_prompt:
+      positive_prompt = ext_llm_prompt
+
+    if ext_gen_prompt is not None and use_ext_gen_prompt:
+      positive_prompt = ext_gen_prompt
 
     set_rating = {
       "explicit": "rating_explicit",
