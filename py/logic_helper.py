@@ -838,9 +838,11 @@ class Optional_Value_Override:
   @classmethod
   def INPUT_TYPES(s):
     return {
+      "optional": {
+        "override_value": (any_type, {"forceInput": True}),
+      },
       "required": {
         "value": (any_type, {"forceInput": True}),
-        "override_value": (any_type, {"forceInput": True}),
         "override_active": (
           "BOOLEAN",
           {
