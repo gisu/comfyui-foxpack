@@ -6,8 +6,8 @@ class Big_Prompter:
     pass
 
   @classmethod
-  def INPUT_TYPES(cls):
-    input_types = {
+  def INPUT_TYPES(s):
+    return {
       "optional": {
         "is_pony": (
           "BOOLEAN",
@@ -55,10 +55,9 @@ class Big_Prompter:
           ["explicit", "questionable", "save", "none"],
           {"default": "save"},
         ),
+        "pony_quality": ([0, 1, 2, 3, 4], {"default": 4}),
       }
     }
-
-    return input_types
 
   RETURN_TYPES = ("STRING", "STRING")
   RETURN_NAMES = ("pos_prompt", "neg_prompt")
